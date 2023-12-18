@@ -30,7 +30,11 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider>
       <WagmiConfig config={wagmiConfig}>
-        <RainbowKitProvider chains={chains} locale="en-US">
+        <RainbowKitProvider
+          chains={chains}
+          locale="en-US"
+          showRecentTransactions={true}
+        >
           <Layout>
             <Component {...pageProps} />
           </Layout>
