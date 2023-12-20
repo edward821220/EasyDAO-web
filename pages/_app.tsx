@@ -1,12 +1,12 @@
 import "../styles/globals.css";
 import "@rainbow-me/rainbowkit/styles.css";
-import Layout from "../components/layout";
+import type { AppProps } from "next/app";
 import { ChakraProvider } from "@chakra-ui/react";
 import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
-import type { AppProps } from "next/app";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { sepolia, holesky, localhost } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
+import Layout from "../components/layout";
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [sepolia, holesky, localhost],
@@ -15,7 +15,7 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
 
 const { connectors } = getDefaultWallets({
   appName: "EasyDao",
-  projectId: "f1f580c83aff21813df95a9251ccdcf9",
+  projectId: process.env.NEXT_PUBLIC_PROJECT_ID!,
   chains,
 });
 
