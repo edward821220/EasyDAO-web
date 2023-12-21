@@ -1,4 +1,3 @@
-import { useState, useRef } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import {
   Modal,
@@ -15,8 +14,16 @@ import {
   Box,
   Flex,
   Text,
+  useToast,
+  Link,
 } from "@chakra-ui/react";
-import { AddIcon, MinusIcon } from "@chakra-ui/icons";
+import { AddIcon, ExternalLinkIcon, MinusIcon } from "@chakra-ui/icons";
+import {
+  useContractWrite,
+  usePrepareContractWrite,
+  useWaitForTransaction,
+} from "wagmi";
+import { CONTRACT_INFOS } from "../abi/contracts";
 
 interface FounderInfo {
   founder: string;
@@ -34,25 +41,64 @@ interface CreateDAOModalProps {
 }
 export function CreateDAOModal(props: CreateDAOModalProps) {
   const { isOpen, onClose } = props;
-  const { register, control, handleSubmit } = useForm<FormData>({
-    defaultValues: {
-      DAOName: "",
-      tokenName: "",
-      tokenSymbol: "",
-      founders: [
-        { founder: "", initialBalance: BigInt(0) },
-        { founder: "", initialBalance: BigInt(0) },
-        { founder: "", initialBalance: BigInt(0) },
-      ],
-    },
-  });
+  const { register, watch, control, handleSubmit, formState } =
+    useForm<FormData>({
+      defaultValues: {
+        DAOName: "",
+        tokenName: "",
+        tokenSymbol: "",
+        founders: [
+          { founder: "", initialBalance: BigInt(0) },
+          { founder: "", initialBalance: BigInt(0) },
+          { founder: "", initialBalance: BigInt(0) },
+        ],
+      },
+    });
   const { fields, append, remove } = useFieldArray({
     control,
     name: "founders",
   });
+  const watchDAOName = watch("DAOName");
+  const watchTokenName = watch("tokenName");
+  const watchTokenSymbol = watch("tokenSymbol");
+  const watchFounders = watch("founders");
+  const { config } = usePrepareContractWrite({
+    address: CONTRACT_INFOS.DiamondFactory.address,
+    abi: CONTRACT_INFOS.DiamondFactory.abi,
+    functionName: "createDAODiamond",
+    args: [
+      watchDAOName,
+      watchFounders,
+      watchTokenName,
+      watchTokenSymbol,
+      CONTRACT_INFOS.DiamondCutFacet.address,
+      CONTRACT_INFOS.DiamondLoupeFacet.address,
+      CONTRACT_INFOS.DaoFacet.address,
+      CONTRACT_INFOS.DaoInit.address,
+    ],
+  });
+  const { data, write } = useContractWrite(config);
+  const { isLoading, isSuccess } = useWaitForTransaction({
+    hash: data?.hash,
+  });
+  const toast = useToast();
 
-  const onSubmit = (data: FormData) => {
-    console.log(data);
+  const onSubmit = () => {
+    if (isLoading) return;
+    write?.();
+    toast({
+      title: "Transaction submitted",
+      description: isSuccess ? (
+        <Link href={`https://etherscan.io/tx/${data?.hash}`} isExternal>
+          Dao Created <ExternalLinkIcon mx="2px" />
+        </Link>
+      ) : (
+        "DAO creation failed"
+      ),
+      status: "success",
+      duration: 9000,
+      isClosable: true,
+    });
   };
 
   return (
@@ -126,7 +172,12 @@ export function CreateDAOModal(props: CreateDAOModalProps) {
             </ModalBody>
 
             <ModalFooter>
-              <Button type="submit" colorScheme="blue" mr={3}>
+              <Button
+                type="submit"
+                colorScheme="blue"
+                isLoading={isLoading}
+                mr={3}
+              >
                 Submit
               </Button>
               <Button onClick={onClose}>Cancel</Button>
