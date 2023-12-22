@@ -10,9 +10,28 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { CreateDAOModal } from "../components/createDAOModal";
+import { useAccount, useContractRead } from "wagmi";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { CONTRACT_INFOS } from "../abi/contracts";
 
+interface DAOInfo {
+  daoAddress: string;
+  daoName: string;
+}
 const Home: NextPage = () => {
+  const { isConnected } = useAccount();
+  const { openConnectModal } = useConnectModal();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { data } = useContractRead<
+    typeof CONTRACT_INFOS.DiamondFactory.abi,
+    "getDAOs",
+    DAOInfo[]
+  >({
+    address: CONTRACT_INFOS.DiamondFactory.address,
+    abi: CONTRACT_INFOS.DiamondFactory.abi,
+    functionName: "getDAOs",
+    watch: true,
+  });
 
   return (
     <div>
@@ -46,39 +65,30 @@ const Home: NextPage = () => {
                 border="1px solid gray"
                 boxShadow="rgba(0, 0, 0, 0.5) 0px 0px 5px"
                 onClick={() => {
-                  onOpen();
+                  if (!isConnected) {
+                    openConnectModal?.();
+                  } else {
+                    onOpen();
+                  }
                 }}
               >
                 Create Your DAO
               </Button>
             </GridItem>
-            <GridItem
-              p="1.25rem"
-              textAlign="center"
-              border="1px solid gray"
-              borderRadius="0.375rem"
-              boxShadow="rgba(0, 0, 0, 0.5) 0px 0px 5px"
-            >
-              EasyDAO
-            </GridItem>
-            <GridItem
-              p="1.25rem"
-              textAlign="center"
-              border="1px solid gray"
-              borderRadius="0.375rem"
-              boxShadow="rgba(0, 0, 0, 0.5) 0px 0px 5px"
-            >
-              EasyDAO
-            </GridItem>
-            <GridItem
-              p="1.25rem"
-              textAlign="center"
-              border="1px solid gray"
-              borderRadius="0.375rem"
-              boxShadow="rgba(0, 0, 0, 0.5) 0px 0px 5px"
-            >
-              EasyDAO
-            </GridItem>
+            {data?.map((dao) => (
+              <GridItem
+                key={dao.daoAddress}
+                p="1.25rem"
+                textAlign="center"
+                border="1px solid gray"
+                borderRadius="0.375rem"
+                boxShadow="rgba(0, 0, 0, 0.5) 0px 0px 5px"
+                cursor="pointer"
+                onClick={() => {}}
+              >
+                <Text>{dao.daoName}</Text>
+              </GridItem>
+            ))}
           </Grid>
         </Box>
       </Box>

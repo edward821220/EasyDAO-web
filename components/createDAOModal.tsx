@@ -18,7 +18,7 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { AddIcon, ExternalLinkIcon, MinusIcon } from "@chakra-ui/icons";
-import { useContractWrite } from "wagmi";
+import { useContractWrite, useNetwork } from "wagmi";
 import { CONTRACT_INFOS } from "../abi/contracts";
 
 interface FounderInfo {
@@ -37,6 +37,7 @@ interface CreateDAOModalProps {
 }
 export function CreateDAOModal(props: CreateDAOModalProps) {
   const { isOpen, onClose } = props;
+  const toast = useToast();
   const { register, control, handleSubmit, reset } = useForm<FormData>({
     defaultValues: {
       DAOName: "",
@@ -53,6 +54,7 @@ export function CreateDAOModal(props: CreateDAOModalProps) {
     control,
     name: "founders",
   });
+  const { chain } = useNetwork();
   const { isLoading, write } = useContractWrite({
     address: CONTRACT_INFOS.DiamondFactory.address,
     abi: CONTRACT_INFOS.DiamondFactory.abi,
@@ -61,7 +63,16 @@ export function CreateDAOModal(props: CreateDAOModalProps) {
       toast({
         title: "Transaction succeeded",
         description: (
-          <Link href={`https://etherscan.io/tx/${data?.hash}`} isExternal>
+          <Link
+            href={
+              chain?.name !== "localhost"
+                ? `https://${chain?.name.toLowerCase()}.etherscan.io/tx/${
+                    data?.hash
+                  }`
+                : ""
+            }
+            isExternal
+          >
             Dao Created <ExternalLinkIcon mx="2px" />
           </Link>
         ),
@@ -80,7 +91,6 @@ export function CreateDAOModal(props: CreateDAOModalProps) {
       });
     },
   });
-  const toast = useToast();
 
   const onSubmit = (formData: FormData) => {
     if (isLoading) return;
@@ -171,7 +181,7 @@ export function CreateDAOModal(props: CreateDAOModalProps) {
                   alignItems="center"
                   cursor="pointer"
                   onClick={() => {
-                    if (fields.length >= 10) return;
+                    if (fields.length >= 50) return;
                     append({ founder: "", shares: BigInt(0) });
                   }}
                 >
