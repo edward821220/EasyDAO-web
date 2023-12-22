@@ -34,10 +34,11 @@ interface FormData {
 interface CreateDAOModalProps {
   isOpen: boolean;
   onClose: () => void;
+  chainName: string;
 }
 export function CreateDAOModal(props: CreateDAOModalProps) {
-  const { isOpen, onClose } = props;
   const toast = useToast();
+  const { isOpen, onClose, chainName } = props;
   const { register, control, handleSubmit, reset } = useForm<FormData>({
     defaultValues: {
       DAOName: "",
@@ -54,7 +55,6 @@ export function CreateDAOModal(props: CreateDAOModalProps) {
     control,
     name: "founders",
   });
-  const { chain } = useNetwork();
   const { isLoading, write } = useContractWrite({
     address: CONTRACT_INFOS.DiamondFactory.address,
     abi: CONTRACT_INFOS.DiamondFactory.abi,
@@ -65,8 +65,8 @@ export function CreateDAOModal(props: CreateDAOModalProps) {
         description: (
           <Link
             href={
-              chain?.name !== "localhost"
-                ? `https://${chain?.name.toLowerCase()}.etherscan.io/tx/${
+              chainName !== "localhost"
+                ? `https://${chainName.toLowerCase()}.etherscan.io/tx/${
                     data?.hash
                   }`
                 : ""
