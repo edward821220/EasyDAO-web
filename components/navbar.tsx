@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Box, Heading } from "@chakra-ui/react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
@@ -13,7 +14,9 @@ function Navbar() {
       bgColor="#23272e"
       borderBottom="1px solid gray"
     >
-      <Heading color="#fff">EasyDAO</Heading>
+      <Link href="/">
+        <Heading color="#fff">EasyDAO</Heading>
+      </Link>
       <ConnectButton />
     </Box>
   );

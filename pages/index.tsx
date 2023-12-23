@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Link from "next/link";
 import type { NextPage } from "next";
 import {
   Box,
@@ -82,20 +83,21 @@ const Home: NextPage = () => {
               </Button>
             </GridItem>
             {data?.map((dao) => (
-              <GridItem
-                key={dao.daoAddress}
-                p="1.25rem"
-                textAlign="center"
-                border="1px solid gray"
-                borderRadius="0.375rem"
-                boxShadow="rgba(0, 0, 0, 0.5) 0px 0px 5px"
-                cursor="pointer"
-                onClick={() => {
-                  console.log("hi");
-                }}
-              >
-                {dao.daoName}
-              </GridItem>
+              <Link key={dao.daoAddress} href={`/detail/${dao.daoAddress}`}>
+                <GridItem
+                  p="1.25rem"
+                  textAlign="center"
+                  border="1px solid gray"
+                  borderRadius="0.375rem"
+                  boxShadow="rgba(0, 0, 0, 0.5) 0px 0px 5px"
+                  _hover={{
+                    boxShadow: "rgba(0, 0, 0, 0.5) 0px 0px 15px",
+                    background: "rgba(0, 0, 0, 0.5)",
+                  }}
+                >
+                  {dao.daoName}
+                </GridItem>
+              </Link>
             ))}
           </Grid>
         </Box>
