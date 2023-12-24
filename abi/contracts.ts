@@ -20,7 +20,7 @@ interface ContractInfo {
 
 export const CONTRACT_INFOS: Record<ContractName, ContractInfo> = {
   DiamondFactory: {
-    address: "0x0dc7969daF1FECa60d1D07C98f1d400A98dDC3af",
+    address: "0x49EC5B734FA060Faa94509dF9c826dB866B82cf5",
     abi: [
       { type: "constructor", inputs: [], stateMutability: "nonpayable" },
       { type: "fallback", stateMutability: "payable" },
@@ -445,7 +445,7 @@ export const CONTRACT_INFOS: Record<ContractName, ContractInfo> = {
     ] as const,
   },
   DaoFacet: {
-    address: "0xd4587Cd5cAb5a45002596fbA1AF938916C1B0904",
+    address: "0x5a0e8c78e04a1d9F6E56789B2efFAC42660CB983",
     abi: [
       {
         type: "function",
@@ -738,13 +738,13 @@ export const CONTRACT_INFOS: Record<ContractName, ContractInfo> = {
           {
             name: "proposalType",
             type: "string",
-            indexed: true,
+            indexed: false,
             internalType: "string",
           },
           {
             name: "description",
             type: "string",
-            indexed: true,
+            indexed: false,
             internalType: "string",
           },
         ],
@@ -963,7 +963,7 @@ export const CONTRACT_INFOS: Record<ContractName, ContractInfo> = {
     ] as const,
   },
   DividendFacet: {
-    address: "0xF91C827652f3E22A32CfD40FaCdF1425103fFfF0",
+    address: "0x2D615c5Fb20822F16537e45f91FCc70D0b321441",
     abi: [
       {
         type: "function",

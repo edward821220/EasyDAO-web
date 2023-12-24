@@ -39,7 +39,7 @@ const Home: NextPage = () => {
         <meta content="Establish your DAO easily!" name="description" />
         <link href="../static/icon.png" rel="icon" />
       </Head>
-      <Box h="calc(100vh - 64px)" color="white" bgColor="#23272f">
+      <Box minH="calc(100vh - 64px)" color="white" bgColor="#23272f">
         <Box p={5}>
           <Heading as="h1" size={{ xl: "2xl", base: "xl" }} mb={3}>
             Welcome to Easy DAO
