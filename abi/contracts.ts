@@ -1,4 +1,3 @@
-import { Abi } from "viem";
 import { Address } from "viem";
 
 type ContractName =
@@ -16,12 +15,12 @@ type ContractName =
 
 interface ContractInfo {
   address: Address;
-  abi: Abi;
+  abi: any;
 }
 
 export const CONTRACT_INFOS: Record<ContractName, ContractInfo> = {
   DiamondFactory: {
-    address: "0xa4d7C0F45B8b37Cad8F87bbD20C057A5a64A3aeD",
+    address: "0x0dc7969daF1FECa60d1D07C98f1d400A98dDC3af",
     abi: [
       { type: "constructor", inputs: [], stateMutability: "nonpayable" },
       { type: "fallback", stateMutability: "payable" },
@@ -194,7 +193,7 @@ export const CONTRACT_INFOS: Record<ContractName, ContractInfo> = {
         name: "OwnableUnauthorizedAccount",
         inputs: [{ name: "account", type: "address", internalType: "address" }],
       },
-    ],
+    ] as const,
   },
   DiamondCutFacet: {
     address: "0x0ebebE0CfD9733B9268aF75fBf2086b18f47671d",
@@ -359,7 +358,7 @@ export const CONTRACT_INFOS: Record<ContractName, ContractInfo> = {
           { name: "_calldata", type: "bytes", internalType: "bytes" },
         ],
       },
-    ],
+    ] as const,
   },
   DiamondLoupeFacet: {
     address: "0x937a6B316E226E8de1E7AE196B1ADC11A15D4256",
@@ -443,10 +442,10 @@ export const CONTRACT_INFOS: Record<ContractName, ContractInfo> = {
         outputs: [{ name: "", type: "bool", internalType: "bool" }],
         stateMutability: "view",
       },
-    ],
+    ] as const,
   },
   DaoFacet: {
-    address: "0xA1F41c2519852cf7DabF91Bf03B4d18C35E08194",
+    address: "0xd4587Cd5cAb5a45002596fbA1AF938916C1B0904",
     abi: [
       {
         type: "function",
@@ -547,7 +546,11 @@ export const CONTRACT_INFOS: Record<ContractName, ContractInfo> = {
       {
         type: "function",
         name: "createProposal",
-        inputs: [{ name: "data_", type: "bytes", internalType: "bytes" }],
+        inputs: [
+          { name: "data_", type: "bytes", internalType: "bytes" },
+          { name: "proposalType", type: "string", internalType: "string" },
+          { name: "description", type: "string", internalType: "string" },
+        ],
         outputs: [
           { name: "proposalId", type: "uint256", internalType: "uint256" },
         ],
@@ -724,6 +727,31 @@ export const CONTRACT_INFOS: Record<ContractName, ContractInfo> = {
       },
       {
         type: "event",
+        name: "ProposalCreated",
+        inputs: [
+          {
+            name: "proposalId",
+            type: "uint256",
+            indexed: true,
+            internalType: "uint256",
+          },
+          {
+            name: "proposalType",
+            type: "string",
+            indexed: true,
+            internalType: "string",
+          },
+          {
+            name: "description",
+            type: "string",
+            indexed: true,
+            internalType: "string",
+          },
+        ],
+        anonymous: false,
+      },
+      {
+        type: "event",
         name: "Transfer",
         inputs: [
           {
@@ -789,7 +817,7 @@ export const CONTRACT_INFOS: Record<ContractName, ContractInfo> = {
         name: "ERC20InvalidSpender",
         inputs: [{ name: "spender", type: "address", internalType: "address" }],
       },
-    ],
+    ] as const,
   },
   DaoInit: {
     address: "0xa3BbE6336A58cd96CDF1316FF926e0E42D26F5d4",
@@ -840,7 +868,7 @@ export const CONTRACT_INFOS: Record<ContractName, ContractInfo> = {
         ],
         anonymous: false,
       },
-    ],
+    ] as const,
   },
   OwnershipFacet: {
     address: "0x7E374A3d3761B0E1160babB94c87C2c0cB4Ea804",
@@ -899,7 +927,7 @@ export const CONTRACT_INFOS: Record<ContractName, ContractInfo> = {
         ],
         anonymous: false,
       },
-    ],
+    ] as const,
   },
   OwnershipInit: {
     address: "0xDa50ad6104f097e8E4b63eA97Ee3fF67d6a93fDA",
@@ -932,10 +960,10 @@ export const CONTRACT_INFOS: Record<ContractName, ContractInfo> = {
         ],
         anonymous: false,
       },
-    ],
+    ] as const,
   },
   DividendFacet: {
-    address: "0x7063d56a8ceFeC2D767C07d95ec76BFaAF4E55CA",
+    address: "0xF91C827652f3E22A32CfD40FaCdF1425103fFfF0",
     abi: [
       {
         type: "function",
@@ -1032,7 +1060,7 @@ export const CONTRACT_INFOS: Record<ContractName, ContractInfo> = {
         ],
         anonymous: false,
       },
-    ],
+    ] as const,
   },
   DividendInit: {
     address: "0xA0CA0361751b41D1FF515DAE966bF437b3f73f28",
@@ -1047,7 +1075,7 @@ export const CONTRACT_INFOS: Record<ContractName, ContractInfo> = {
         outputs: [],
         stateMutability: "payable",
       },
-    ],
+    ] as const,
   },
   VaultFacet: {
     address: "0x5790D013724f35bb28f5bde98ceA3F0f7cdFCd80",
@@ -1256,7 +1284,7 @@ export const CONTRACT_INFOS: Record<ContractName, ContractInfo> = {
         outputs: [],
         stateMutability: "nonpayable",
       },
-    ],
+    ] as const,
   },
   VaultInit: {
     address: "0x0Fa9DD0d42cda3Dcc67A9835E82b38672613d644",
@@ -1268,6 +1296,6 @@ export const CONTRACT_INFOS: Record<ContractName, ContractInfo> = {
         outputs: [],
         stateMutability: "payable",
       },
-    ],
+    ] as const,
   },
 };

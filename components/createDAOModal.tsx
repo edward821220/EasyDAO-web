@@ -18,7 +18,7 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { AddIcon, ExternalLinkIcon, MinusIcon } from "@chakra-ui/icons";
-import { useContractWrite, useNetwork } from "wagmi";
+import { useContractWrite } from "wagmi";
 import { CONTRACT_INFOS } from "../abi/contracts";
 
 interface FounderInfo {
@@ -64,13 +64,9 @@ export function CreateDAOModal(props: CreateDAOModalProps) {
         title: "Transaction succeeded",
         description: (
           <Link
-            href={
-              chainName !== "localhost"
-                ? `https://${chainName.toLowerCase()}.etherscan.io/tx/${
-                    data?.hash
-                  }`
-                : ""
-            }
+            href={`https://${chainName.toLowerCase()}.etherscan.io/tx/${
+              data?.hash
+            }`}
             isExternal
           >
             Dao Created <ExternalLinkIcon mx="2px" />

@@ -3,11 +3,11 @@ import Link from "next/link";
 import type { NextPage } from "next";
 import {
   Box,
-  Button,
+  Text,
   Grid,
   GridItem,
+  Button,
   Heading,
-  Text,
   useDisclosure,
 } from "@chakra-ui/react";
 import { useAccount, useContractRead, useNetwork } from "wagmi";
@@ -16,21 +16,13 @@ import { useIsMounted } from "../hooks/useIsMounted";
 import { CreateDAOModal } from "../components/createDAOModal";
 import { CONTRACT_INFOS } from "../abi/contracts";
 
-interface DAOInfo {
-  daoAddress: string;
-  daoName: string;
-}
 const Home: NextPage = () => {
   const isMounted = useIsMounted();
   const { chain } = useNetwork();
   const { isConnected } = useAccount();
   const { openConnectModal } = useConnectModal();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { data } = useContractRead<
-    typeof CONTRACT_INFOS.DiamondFactory.abi,
-    "getDAOs",
-    DAOInfo[]
-  >({
+  const { data } = useContractRead({
     address: CONTRACT_INFOS.DiamondFactory.address,
     abi: CONTRACT_INFOS.DiamondFactory.abi,
     functionName: "getDAOs",
