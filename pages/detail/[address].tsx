@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import {
@@ -46,8 +46,8 @@ const convertStatus = (status: number) => {
 };
 
 interface ProposalCreatedEvent {
-  proposalId: BigInt;
-  totalSupplySnapshot: BigInt;
+  proposalId: bigint;
+  totalSupplySnapshot: bigint;
   proposalType: string;
   description: string;
 }
@@ -63,6 +63,7 @@ export default function Detail() {
   const [proposalEvents, setProposalEvents] = useState<ProposalCreatedEvent[]>(
     []
   );
+  const proposalEventsRef = useRef<ProposalCreatedEvent[]>([]);
   const chainName = chain?.name || "sepolia";
   const contract = {
     address: daoAddress as `0x${string}`,
@@ -82,9 +83,9 @@ export default function Detail() {
     functionName: "getProposals",
     watch: true,
   });
-  console.log("hi1");
-  console.log(proposalDetails);
+
   useEffect(() => {
+    if (!daoAddress) return;
     const getAllEvents = async () => {
       const logs = await publicClient.getLogs({
         address: daoAddress as `0x${string}`,
@@ -102,6 +103,7 @@ export default function Detail() {
           }).args
       ) as ProposalCreatedEvent[];
       setProposalEvents(decodedLogs);
+      proposalEventsRef.current = decodedLogs;
     };
     getAllEvents();
   }, [publicClient, daoAddress]);
@@ -118,9 +120,9 @@ export default function Detail() {
             topics: log.topics,
           }).args
       ) as ProposalCreatedEvent[];
-      setProposalEvents([...proposalEvents, ...decodedLogs]);
-      console.log("hi");
-      console.log([...proposalEvents, ...decodedLogs]);
+      const newEvents = proposalEventsRef.current.concat(decodedLogs);
+      proposalEventsRef.current = newEvents;
+      setProposalEvents(newEvents);
     },
   });
 
@@ -305,8 +307,10 @@ export default function Detail() {
                     colorScheme="teal"
                     size="lg"
                     value={
-                      (Number(proposal.votesYes) * 100) /
-                      Number(proposalEvents?.[index]?.totalSupplySnapshot)
+                      proposalEvents?.[index]
+                        ? (Number(proposal.votesYes) * 100) /
+                          Number(proposalEvents?.[index]?.totalSupplySnapshot)
+                        : 0
                     }
                     cursor="pointer"
                     onClick={() => {
@@ -319,8 +323,10 @@ export default function Detail() {
                     colorScheme="pink"
                     size="lg"
                     value={
-                      (Number(proposal.votesNo) * 100) /
-                      Number(proposalEvents?.[index]?.totalSupplySnapshot)
+                      proposalEvents?.[index]
+                        ? (Number(proposal.votesNo) * 100) /
+                          Number(proposalEvents?.[index]?.totalSupplySnapshot)
+                        : 0
                     }
                     cursor="pointer"
                     onClick={() => {
