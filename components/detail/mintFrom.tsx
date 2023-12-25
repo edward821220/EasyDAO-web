@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { AddIcon, ExternalLinkIcon, MinusIcon } from "@chakra-ui/icons";
 import { useContractWrite } from "wagmi";
-import { encodeFunctionData } from "viem";
+import { Address, encodeFunctionData } from "viem";
 import { CONTRACT_INFOS } from "../../abi/contracts";
 
 interface Receiver {
@@ -34,7 +34,13 @@ interface MintFormProps {
 
 function MintForm({ chainName, daoAddress, onClose }: MintFormProps) {
   const toast = useToast();
-  const { register, control, handleSubmit, reset } = useForm<MintFormData>({
+  const {
+    register,
+    formState: { errors },
+    control,
+    handleSubmit,
+    reset,
+  } = useForm<MintFormData>({
     defaultValues: {
       description: "",
       receivers: [
@@ -91,7 +97,7 @@ function MintForm({ chainName, daoAddress, onClose }: MintFormProps) {
       functionName: "mintByProposal",
       args: [
         formData.receivers.map((receiver) => ({
-          ...receiver,
+          receiver: receiver.receiver as Address,
           amount: BigInt(Number(receiver.amount) * 10 ** 18),
         })),
       ],
@@ -121,23 +127,36 @@ function MintForm({ chainName, daoAddress, onClose }: MintFormProps) {
             {...register("description")}
           />
           <FormLabel mt={4}>Receivers</FormLabel>
-          {fields.map((field, index) => (
-            <Box mb={2} key={field.id}>
-              <Input
-                required
-                mb={1}
-                placeholder={`Receiver ${index + 1} Address`}
-                {...register(`receivers.${index}.receiver`)}
-              />
-              <Input
-                min={1}
-                required
-                placeholder={`Receiver ${index + 1} Amount`}
-                type="number"
-                {...register(`receivers.${index}.amount`)}
-              />
-            </Box>
-          ))}
+          {fields.map((field, index) => {
+            const error = errors?.receivers?.[index]?.receiver?.message;
+            return (
+              <Box mb={2} key={field.id}>
+                <Input
+                  required
+                  mb={1}
+                  placeholder={`Receiver ${index + 1} Address`}
+                  {...register(`receivers.${index}.receiver`, {
+                    pattern: {
+                      value: /^0x[a-fA-F0-9]{40}$/,
+                      message: "Invalid address",
+                    },
+                  })}
+                />
+                {error && (
+                  <Text mb={1} color="red">
+                    {error}
+                  </Text>
+                )}
+                <Input
+                  min={1}
+                  required
+                  placeholder={`Receiver ${index + 1} Amount`}
+                  type="number"
+                  {...register(`receivers.${index}.amount`)}
+                />
+              </Box>
+            );
+          })}
         </FormControl>
         <Flex mt="4" alignItems="center" justifyContent="space-around">
           <Flex

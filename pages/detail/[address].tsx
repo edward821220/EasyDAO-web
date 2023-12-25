@@ -9,14 +9,12 @@ import {
   Grid,
   Heading,
   Link,
-  ListItem,
   Progress,
-  UnorderedList,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
-import { decodeEventLog, parseAbiItem } from "viem";
+import { Address, decodeEventLog, parseAbiItem } from "viem";
 import {
   useToken,
   useBalance,
@@ -30,6 +28,7 @@ import { getPublicClient } from "@wagmi/core";
 import { useIsMounted } from "../../hooks/useIsMounted";
 import { CONTRACT_INFOS } from "../../abi/contracts";
 import { CreateProposalModal } from "../../components/detail/createProposalModal";
+import Overview from "../../components/detail/overview";
 
 const convertStatus = (status: number) => {
   switch (status) {
@@ -123,18 +122,6 @@ export default function Detail() {
     functionName: "getProposals",
     watch: true,
   });
-  const { data: totalSupply } = useContractRead({
-    ...contract,
-    functionName: "totalSupply",
-    watch: true,
-  });
-  const { data: tokenData } = useToken(contract);
-  const { data: tokenBalance } = useBalance({
-    address: account,
-    token: contract.address,
-    chainId: contract.chainId,
-    watch: true,
-  });
 
   const { isLoading: isLoadingVote, write: vote } = useContractWrite({
     ...contract,
@@ -157,7 +144,7 @@ export default function Detail() {
         isClosable: true,
       });
     },
-    onError: (error) => {
+    onError: () => {
       toast({
         title: "Transaction failed",
         description: "Vote failed",
@@ -199,12 +186,12 @@ export default function Detail() {
     },
   });
 
-  const handleVote = (proposalId: number, side: 0 | 1) => {
+  const handleVote = (proposalId: bigint, side: 0 | 1) => {
     if (isLoadingVote) return;
     vote?.({ args: [proposalId, side] });
   };
 
-  const handleExecute = (proposalId: number) => {
+  const handleExecute = (proposalId: bigint) => {
     if (isLoadingExecute) return;
     execute?.({ args: [proposalId] });
   };
@@ -220,14 +207,14 @@ export default function Detail() {
       <Box minH="calc(100vh - 64px)" color="white" bgColor="#23272f">
         <Box maxW="1280px" m="0 auto" py="50px" px="20px">
           <Heading as="h2">Overview</Heading>
-          <UnorderedList mt={6} fontSize="20px" spacing={2}>
-            <ListItem>Organization Name: {daoName}</ListItem>
-            <ListItem>Contract Address: {daoAddress}</ListItem>
-            <ListItem>Token Name: {tokenData?.name}</ListItem>
-            <ListItem>Token Symbol: {tokenData?.symbol}</ListItem>
-            <ListItem>Total Supply: {Number(totalSupply) / 10 ** 18}</ListItem>
-            <ListItem>Your Balance: {tokenBalance?.formatted}</ListItem>
-          </UnorderedList>
+          {daoName && (
+            <Overview
+              daoName={daoName}
+              daoAddress={daoAddress as Address}
+              account={account as Address}
+              chainId={chain?.id || 11155111}
+            />
+          )}
           <Flex mt={6} alignItems="center">
             <Heading as="h2">Proposals</Heading>
             <Button ml={6} colorScheme="facebook" onClick={onOpen}>
@@ -286,7 +273,7 @@ export default function Detail() {
                     }
                     cursor="pointer"
                     onClick={() => {
-                      handleVote(Number(proposal.id), 0);
+                      handleVote(proposal.id, 0);
                     }}
                   />
                   <Box mb={1}>No:</Box>
@@ -300,7 +287,7 @@ export default function Detail() {
                     }
                     cursor="pointer"
                     onClick={() => {
-                      handleVote(Number(proposal.id), 1);
+                      handleVote(proposal.id, 1);
                     }}
                   />
                   <Flex mt={6} justifyContent="space-between" flexWrap="wrap">
@@ -324,7 +311,7 @@ export default function Detail() {
                       <Button
                         colorScheme="cyan"
                         onClick={() => {
-                          handleExecute(Number(proposal.id));
+                          handleExecute(proposal.id);
                         }}
                       >
                         Execute

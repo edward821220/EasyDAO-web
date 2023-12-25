@@ -18,7 +18,7 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { AddIcon, ExternalLinkIcon, MinusIcon } from "@chakra-ui/icons";
-import { useContractWrite } from "wagmi";
+import { Address, useContractWrite } from "wagmi";
 import { CONTRACT_INFOS } from "../abi/contracts";
 
 interface FounderInfo {
@@ -39,7 +39,13 @@ interface CreateDAOModalProps {
 export function CreateDAOModal(props: CreateDAOModalProps) {
   const toast = useToast();
   const { isOpen, onClose, chainName } = props;
-  const { register, control, handleSubmit, reset } = useForm<FormData>({
+  const {
+    register,
+    formState: { errors },
+    control,
+    handleSubmit,
+    reset,
+  } = useForm<FormData>({
     defaultValues: {
       DAOName: "",
       tokenName: "",
@@ -94,7 +100,7 @@ export function CreateDAOModal(props: CreateDAOModalProps) {
       args: [
         formData.DAOName,
         formData.founders.map((founder) => ({
-          ...founder,
+          founder: founder.founder as Address,
           shares: BigInt(Number(founder.shares) * 10 ** 18),
         })),
         formData.tokenName,
@@ -154,23 +160,36 @@ export function CreateDAOModal(props: CreateDAOModalProps) {
 
               <FormControl mt={4}>
                 <FormLabel>Founders Info (Address & Initial Balance)</FormLabel>
-                {fields.map((field, index) => (
-                  <Box mb={2} key={field.id}>
-                    <Input
-                      required
-                      mb={1}
-                      placeholder={`Founder ${index + 1} Address`}
-                      {...register(`founders.${index}.founder`)}
-                    />
-                    <Input
-                      min={1}
-                      required
-                      placeholder={`Founder ${index + 1} Initial Balance`}
-                      type="number"
-                      {...register(`founders.${index}.shares`)}
-                    />
-                  </Box>
-                ))}
+                {fields.map((field, index) => {
+                  const error = errors?.founders?.[index]?.founder?.message;
+                  return (
+                    <Box mb={2} key={field.id}>
+                      <Input
+                        required
+                        mb={1}
+                        placeholder={`Founder ${index + 1} Address`}
+                        {...register(`founders.${index}.founder`, {
+                          pattern: {
+                            value: /^0x[a-fA-F0-9]{40}$/,
+                            message: "Invalid address",
+                          },
+                        })}
+                      />
+                      {error && (
+                        <Text mb={1} color="red">
+                          {error}
+                        </Text>
+                      )}
+                      <Input
+                        min={1}
+                        required
+                        placeholder={`Founder ${index + 1} Initial Balance`}
+                        type="number"
+                        {...register(`founders.${index}.shares`)}
+                      />
+                    </Box>
+                  );
+                })}
               </FormControl>
               <Flex mt="4" alignItems="center" justifyContent="space-around">
                 <Flex
