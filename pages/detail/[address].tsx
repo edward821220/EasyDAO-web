@@ -167,7 +167,7 @@ export default function Detail() {
             }`}
             isExternal
           >
-            Voted! <ExternalLinkIcon mx="2px" />
+            Executed! <ExternalLinkIcon mx="2px" />
           </Link>
         ),
         status: "success",
@@ -185,6 +185,37 @@ export default function Detail() {
       });
     },
   });
+  const { isLoading: isLoadingCancel, write: cancel } = useContractWrite({
+    ...contract,
+    functionName: "cancelProposal",
+    onSuccess: (data) => {
+      toast({
+        title: "Transaction succeeded",
+        description: (
+          <Link
+            href={`https://${chainName.toLowerCase()}.etherscan.io/tx/${
+              data?.hash
+            }`}
+            isExternal
+          >
+            Canceled! <ExternalLinkIcon mx="2px" />
+          </Link>
+        ),
+        status: "success",
+        duration: 10000,
+        isClosable: true,
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Transaction failed",
+        description: "Cancel failed",
+        status: "error",
+        duration: 10000,
+        isClosable: true,
+      });
+    },
+  });
 
   const handleVote = (proposalId: bigint, side: 0 | 1) => {
     if (isLoadingVote) return;
@@ -194,6 +225,11 @@ export default function Detail() {
   const handleExecute = (proposalId: bigint) => {
     if (isLoadingExecute) return;
     execute?.({ args: [proposalId] });
+  };
+
+  const handleCancel = (proposalId: bigint) => {
+    if (isLoadingCancel) return;
+    cancel?.({ args: [proposalId] });
   };
 
   if (!isMounted) return null;
@@ -303,13 +339,19 @@ export default function Detail() {
                   <Flex justifyContent="flex-end" mt={4} gap={4}>
                     {convertStatus(proposal.status)?.label === "Pending" &&
                       account === proposalDetails?.[index].author && (
-                        <Button colorScheme="red" onClick={() => {}}>
+                        <Button
+                          colorScheme="red"
+                          onClick={() => {
+                            handleCancel(proposal.id);
+                          }}
+                        >
                           Cancel
                         </Button>
                       )}
                     {convertStatus(proposal.status)?.label === "Approved" && (
                       <Button
                         colorScheme="cyan"
+                        isLoading={isLoadingExecute}
                         onClick={() => {
                           handleExecute(proposal.id);
                         }}
