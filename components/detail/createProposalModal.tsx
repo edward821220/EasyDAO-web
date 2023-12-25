@@ -14,7 +14,9 @@ import {
   MenuItem,
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
-import MintForm from "./mintFrom";
+import MintForm from "./mintForm";
+import UpgradeForm from "./upgradeForm";
+import OtherForm from "./otherForm";
 
 interface CreateDAOModalProps {
   isOpen: boolean;
@@ -52,11 +54,26 @@ export function CreateProposalModal(props: CreateDAOModalProps) {
                 <MenuItem onClick={() => handleSelect("Upgrade")}>
                   Upgrade
                 </MenuItem>
+                <MenuItem onClick={() => handleSelect("Other")}>Other</MenuItem>
               </MenuList>
             </Menu>
           </FormControl>
           {proposalType === "Mint" && (
             <MintForm
+              chainName={chainName}
+              daoAddress={daoAddress}
+              onClose={onClose}
+            />
+          )}
+          {proposalType === "Upgrade" && (
+            <UpgradeForm
+              chainName={chainName}
+              daoAddress={daoAddress}
+              onClose={onClose}
+            />
+          )}
+          {proposalType === "Other" && (
+            <OtherForm
               chainName={chainName}
               daoAddress={daoAddress}
               onClose={onClose}

@@ -1,8 +1,6 @@
-import { Address } from "viem";
-
 export const CONTRACT_INFOS = {
   DiamondFactory: {
-    address: "0x387D764668DfFE58D746b3365cb588b76dbc8bbA" as Address,
+    address: "0x387D764668DfFE58D746b3365cb588b76dbc8bbA",
     abi: [
       { type: "constructor", inputs: [], stateMutability: "nonpayable" },
       { type: "fallback", stateMutability: "payable" },
@@ -175,10 +173,10 @@ export const CONTRACT_INFOS = {
         name: "OwnableUnauthorizedAccount",
         inputs: [{ name: "account", type: "address", internalType: "address" }],
       },
-    ] as const,
+    ],
   },
   DiamondCutFacet: {
-    address: "0x0ebebE0CfD9733B9268aF75fBf2086b18f47671d" as Address,
+    address: "0x0ebebE0CfD9733B9268aF75fBf2086b18f47671d",
     abi: [
       {
         type: "function",
@@ -340,10 +338,10 @@ export const CONTRACT_INFOS = {
           { name: "_calldata", type: "bytes", internalType: "bytes" },
         ],
       },
-    ] as const,
+    ],
   },
   DiamondLoupeFacet: {
-    address: "0x937a6B316E226E8de1E7AE196B1ADC11A15D4256" as Address,
+    address: "0x937a6B316E226E8de1E7AE196B1ADC11A15D4256",
     abi: [
       {
         type: "function",
@@ -424,10 +422,10 @@ export const CONTRACT_INFOS = {
         outputs: [{ name: "", type: "bool", internalType: "bool" }],
         stateMutability: "view",
       },
-    ] as const,
+    ],
   },
   DaoFacet: {
-    address: "0x08C5F8b5A23370E8981Fe1f498AF506AB81CB57c" as Address,
+    address: "0x08C5F8b5A23370E8981Fe1f498AF506AB81CB57c",
     abi: [
       {
         type: "function",
@@ -805,10 +803,10 @@ export const CONTRACT_INFOS = {
         name: "ERC20InvalidSpender",
         inputs: [{ name: "spender", type: "address", internalType: "address" }],
       },
-    ] as const,
+    ],
   },
   DaoInit: {
-    address: "0xa3BbE6336A58cd96CDF1316FF926e0E42D26F5d4" as Address,
+    address: "0xa3BbE6336A58cd96CDF1316FF926e0E42D26F5d4",
     abi: [
       {
         type: "function",
@@ -856,10 +854,10 @@ export const CONTRACT_INFOS = {
         ],
         anonymous: false,
       },
-    ] as const,
+    ],
   },
   OwnershipFacet: {
-    address: "0x7E374A3d3761B0E1160babB94c87C2c0cB4Ea804" as Address,
+    address: "0x7E374A3d3761B0E1160babB94c87C2c0cB4Ea804",
     abi: [
       {
         type: "function",
@@ -915,10 +913,10 @@ export const CONTRACT_INFOS = {
         ],
         anonymous: false,
       },
-    ] as const,
+    ],
   },
   OwnershipInit: {
-    address: "0xDa50ad6104f097e8E4b63eA97Ee3fF67d6a93fDA" as Address,
+    address: "0xDa50ad6104f097e8E4b63eA97Ee3fF67d6a93fDA",
     abi: [
       {
         type: "function",
@@ -948,10 +946,10 @@ export const CONTRACT_INFOS = {
         ],
         anonymous: false,
       },
-    ] as const,
+    ],
   },
   DividendFacet: {
-    address: "0x2D615c5Fb20822F16537e45f91FCc70D0b321441" as Address,
+    address: "0x2D615c5Fb20822F16537e45f91FCc70D0b321441",
     abi: [
       {
         type: "function",
@@ -1048,10 +1046,10 @@ export const CONTRACT_INFOS = {
         ],
         anonymous: false,
       },
-    ] as const,
+    ],
   },
   DividendInit: {
-    address: "0xA0CA0361751b41D1FF515DAE966bF437b3f73f28" as Address,
+    address: "0xA0CA0361751b41D1FF515DAE966bF437b3f73f28",
     abi: [
       {
         type: "function",
@@ -1063,10 +1061,10 @@ export const CONTRACT_INFOS = {
         outputs: [],
         stateMutability: "payable",
       },
-    ] as const,
+    ],
   },
   VaultFacet: {
-    address: "0x5790D013724f35bb28f5bde98ceA3F0f7cdFCd80" as Address,
+    address: "0x5790D013724f35bb28f5bde98ceA3F0f7cdFCd80",
     abi: [
       {
         type: "function",
@@ -1272,10 +1270,10 @@ export const CONTRACT_INFOS = {
         outputs: [],
         stateMutability: "nonpayable",
       },
-    ] as const,
+    ],
   },
   VaultInit: {
-    address: "0x0Fa9DD0d42cda3Dcc67A9835E82b38672613d644" as Address,
+    address: "0x0Fa9DD0d42cda3Dcc67A9835E82b38672613d644",
     abi: [
       {
         type: "function",
@@ -1284,6 +1282,6 @@ export const CONTRACT_INFOS = {
         outputs: [],
         stateMutability: "payable",
       },
-    ] as const,
+    ],
   },
-};
+} as const;

@@ -116,7 +116,7 @@ function MintForm({ chainName, daoAddress, onClose }: MintFormProps) {
     reset();
   };
   return (
-    <form key="mintForm" onSubmit={handleSubmit(onSubmit)}>
+    <form key="MintForm" onSubmit={handleSubmit(onSubmit)}>
       <ModalBody>
         <FormControl>
           <FormLabel mt={4}>Proposal Description</FormLabel>

@@ -16,8 +16,6 @@ import {
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { Address, decodeEventLog, parseAbiItem } from "viem";
 import {
-  useToken,
-  useBalance,
   useAccount,
   useNetwork,
   useContractEvent,
@@ -72,6 +70,20 @@ export default function Detail() {
     chainId: chain?.id || 11155111,
   };
 
+  const { data: daoName } = useContractRead({
+    ...contract,
+    functionName: "daoName",
+    onError: () => {
+      router.push("/");
+    },
+  });
+  const { data: proposalDetails } = useContractRead({
+    ...contract,
+    functionName: "getProposals",
+    watch: true,
+  });
+  console.log("hi1");
+  console.log(proposalDetails);
   useEffect(() => {
     const getAllEvents = async () => {
       const logs = await publicClient.getLogs({
@@ -107,20 +119,9 @@ export default function Detail() {
           }).args
       ) as ProposalCreatedEvent[];
       setProposalEvents([...proposalEvents, ...decodedLogs]);
+      console.log("hi");
+      console.log([...proposalEvents, ...decodedLogs]);
     },
-  });
-
-  const { data: daoName } = useContractRead({
-    ...contract,
-    functionName: "daoName",
-    onError: () => {
-      router.push("/");
-    },
-  });
-  const { data: proposalDetails } = useContractRead({
-    ...contract,
-    functionName: "getProposals",
-    watch: true,
   });
 
   const { isLoading: isLoadingVote, write: vote } = useContractWrite({
