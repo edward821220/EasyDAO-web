@@ -20,7 +20,7 @@ interface ContractInfo {
 
 export const CONTRACT_INFOS: Record<ContractName, ContractInfo> = {
   DiamondFactory: {
-    address: "0x49EC5B734FA060Faa94509dF9c826dB866B82cf5",
+    address: "0x387D764668DfFE58D746b3365cb588b76dbc8bbA",
     abi: [
       { type: "constructor", inputs: [], stateMutability: "nonpayable" },
       { type: "fallback", stateMutability: "payable" },
@@ -445,7 +445,7 @@ export const CONTRACT_INFOS: Record<ContractName, ContractInfo> = {
     ] as const,
   },
   DaoFacet: {
-    address: "0x5a0e8c78e04a1d9F6E56789B2efFAC42660CB983",
+    address: "0x08C5F8b5A23370E8981Fe1f498AF506AB81CB57c",
     abi: [
       {
         type: "function",
@@ -731,6 +731,12 @@ export const CONTRACT_INFOS: Record<ContractName, ContractInfo> = {
         inputs: [
           {
             name: "proposalId",
+            type: "uint256",
+            indexed: true,
+            internalType: "uint256",
+          },
+          {
+            name: "totalSupplySnapshot",
             type: "uint256",
             indexed: true,
             internalType: "uint256",

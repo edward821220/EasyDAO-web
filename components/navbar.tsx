@@ -13,6 +13,7 @@ function Navbar() {
       justifyContent="space-between"
       bgColor="#23272e"
       borderBottom="1px solid gray"
+      zIndex={8}
     >
       <Link href="/">
         <Heading color="#fff">EasyDAO</Heading>

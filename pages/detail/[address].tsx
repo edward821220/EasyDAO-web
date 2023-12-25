@@ -8,11 +8,14 @@ import {
   Flex,
   Grid,
   Heading,
+  Link,
   ListItem,
   Progress,
   UnorderedList,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { decodeEventLog, parseAbiItem } from "viem";
 import {
   useToken,
@@ -21,6 +24,7 @@ import {
   useNetwork,
   useContractEvent,
   useContractRead,
+  useContractWrite,
 } from "wagmi";
 import { getPublicClient } from "@wagmi/core";
 import { useIsMounted } from "../../hooks/useIsMounted";
@@ -46,11 +50,13 @@ const convertStatus = (status: number) => {
 
 interface ProposalCreatedEvent {
   proposalId: BigInt;
+  totalSupplySnapshot: BigInt;
   proposalType: string;
   description: string;
 }
 export default function Detail() {
   const isMounted = useIsMounted();
+  const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const router = useRouter();
   const { chain } = useNetwork();
@@ -60,6 +66,7 @@ export default function Detail() {
   const [proposalEvents, setProposalEvents] = useState<ProposalCreatedEvent[]>(
     []
   );
+  const chainName = chain?.name || "sepolia";
   const contract = {
     address: daoAddress as `0x${string}`,
     abi: CONTRACT_INFOS.DaoFacet.abi,
@@ -71,7 +78,7 @@ export default function Detail() {
       const logs = await publicClient.getLogs({
         address: daoAddress as `0x${string}`,
         event: parseAbiItem(
-          "event ProposalCreated(uint256 indexed proposalId, string proposalType, string description)"
+          "event ProposalCreated(uint256 indexed proposalId,uint256 indexed totalSupplySnapshot, string proposalType, string description)"
         ),
         fromBlock: BigInt(1),
       });
@@ -114,14 +121,93 @@ export default function Detail() {
   const { data: proposalDetails } = useContractRead({
     ...contract,
     functionName: "getProposals",
+    watch: true,
+  });
+  const { data: totalSupply } = useContractRead({
+    ...contract,
+    functionName: "totalSupply",
+    watch: true,
   });
   const { data: tokenData } = useToken(contract);
   const { data: tokenBalance } = useBalance({
     address: account,
-    token: daoAddress as `0x${string}`,
+    token: contract.address,
     chainId: contract.chainId,
     watch: true,
   });
+
+  const { isLoading: isLoadingVote, write: vote } = useContractWrite({
+    ...contract,
+    functionName: "vote",
+    onSuccess: (data) => {
+      toast({
+        title: "Transaction succeeded",
+        description: (
+          <Link
+            href={`https://${chainName.toLowerCase()}.etherscan.io/tx/${
+              data?.hash
+            }`}
+            isExternal
+          >
+            Voted! <ExternalLinkIcon mx="2px" />
+          </Link>
+        ),
+        status: "success",
+        duration: 10000,
+        isClosable: true,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Transaction failed",
+        description: "Vote failed",
+        status: "error",
+        duration: 10000,
+        isClosable: true,
+      });
+    },
+  });
+  const { isLoading: isLoadingExecute, write: execute } = useContractWrite({
+    ...contract,
+    functionName: "executeProposal",
+    onSuccess: (data) => {
+      toast({
+        title: "Transaction succeeded",
+        description: (
+          <Link
+            href={`https://${chainName.toLowerCase()}.etherscan.io/tx/${
+              data?.hash
+            }`}
+            isExternal
+          >
+            Voted! <ExternalLinkIcon mx="2px" />
+          </Link>
+        ),
+        status: "success",
+        duration: 10000,
+        isClosable: true,
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Transaction failed",
+        description: "Execute failed",
+        status: "error",
+        duration: 10000,
+        isClosable: true,
+      });
+    },
+  });
+
+  const handleVote = (proposalId: number, side: 0 | 1) => {
+    if (isLoadingVote) return;
+    vote?.({ args: [proposalId, side] });
+  };
+
+  const handleExecute = (proposalId: number) => {
+    if (isLoadingExecute) return;
+    execute?.({ args: [proposalId] });
+  };
 
   if (!isMounted) return null;
 
@@ -139,9 +225,7 @@ export default function Detail() {
             <ListItem>Contract Address: {daoAddress}</ListItem>
             <ListItem>Token Name: {tokenData?.name}</ListItem>
             <ListItem>Token Symbol: {tokenData?.symbol}</ListItem>
-            <ListItem>
-              Total Supply: {tokenData?.totalSupply.formatted}
-            </ListItem>
+            <ListItem>Total Supply: {Number(totalSupply) / 10 ** 18}</ListItem>
             <ListItem>Your Balance: {tokenBalance?.formatted}</ListItem>
           </UnorderedList>
           <Flex mt={6} alignItems="center">
@@ -151,63 +235,76 @@ export default function Detail() {
             </Button>
           </Flex>
           <Box mt={6}>
-            {proposalEvents?.map((proposal, index) => {
-              const createdAt = new Date(
-                Number(proposalDetails?.[index].createdAt) * 1000
-              );
+            {proposalDetails?.map((proposal, index) => {
+              const createdAt = new Date(Number(proposal.createdAt) * 1000);
               const endAt = new Date(
                 createdAt.valueOf() + 7 * 24 * 60 * 60 * 1000
               );
               return (
                 <Box
-                  key={Number(proposal.proposalId)}
+                  key={Number(proposal.id)}
                   p={4}
                   mb={4}
                   border="1px solid gray"
                   borderRadius="12px"
                 >
-                  <Grid templateColumns="1fr 1fr 2.5fr 3fr" gap={6} mb={2}>
+                  <Grid
+                    templateColumns={{
+                      lg: "2fr 1fr 2.5fr 3.5fr",
+                      md: "1fr 1fr",
+                      base: "1fr",
+                    }}
+                    columnGap={4}
+                    rowGap={2}
+                    mb={2}
+                  >
                     <Flex gap={2} alignItems="baseline">
                       <Badge
-                        p={1}
-                        colorScheme={
-                          convertStatus(proposalDetails?.[index].status).color
-                        }
+                        px={2}
+                        py={1}
+                        colorScheme={convertStatus(proposal.status)?.color}
                         borderRadius="12px"
                       >
-                        {convertStatus(proposalDetails?.[index].status).label}
+                        {convertStatus(proposal.status)?.label}
                       </Badge>
-                      <Box>ID: {String(proposal.proposalId)}</Box>
+                      <Box>ID: {String(proposal.id)}</Box>
                     </Flex>
-                    <Box>Type: {proposal.proposalType}</Box>
-                    <Box>Description: {proposal.description}</Box>
-                    <Box>Author: {proposalDetails?.[index].author}</Box>
+                    <Box>Type: {proposalEvents?.[index]?.proposalType}</Box>
+                    <Box wordBreak="break-all">
+                      Description: {proposalEvents?.[index]?.description}
+                    </Box>
+                    <Box wordBreak="break-all">Author: {proposal.author}</Box>
                   </Grid>
                   <Box mb={1}>Yes: </Box>
                   <Progress
                     mb={1}
-                    colorScheme="green"
+                    colorScheme="teal"
                     size="lg"
                     value={
-                      ((Number(proposalDetails?.[index].votesYes) / 10 ** 18) *
-                        100) /
-                      Number(tokenData?.totalSupply.formatted)
+                      (Number(proposal.votesYes) * 100) /
+                      Number(proposalEvents?.[index]?.totalSupplySnapshot)
                     }
+                    cursor="pointer"
+                    onClick={() => {
+                      handleVote(Number(proposal.id), 0);
+                    }}
                   />
                   <Box mb={1}>No:</Box>
                   <Progress
                     mb={1}
-                    colorScheme="red"
+                    colorScheme="pink"
                     size="lg"
                     value={
-                      ((Number(proposalDetails?.[index].votesYes) / 10 ** 18) *
-                        100) /
-                      Number(tokenData?.totalSupply.formatted)
+                      (Number(proposal.votesNo) * 100) /
+                      Number(proposalEvents?.[index]?.totalSupplySnapshot)
                     }
+                    cursor="pointer"
+                    onClick={() => {
+                      handleVote(Number(proposal.id), 1);
+                    }}
                   />
-
-                  <Flex justifyContent="space-between" mt={6}>
-                    <Box>
+                  <Flex mt={6} justifyContent="space-between" flexWrap="wrap">
+                    <Box mr={4}>
                       Created Time: {createdAt.toLocaleDateString()}{" "}
                       {createdAt.toLocaleTimeString()}
                     </Box>
@@ -215,6 +312,24 @@ export default function Detail() {
                       End Time: {new Date(endAt).toLocaleDateString()}{" "}
                       {new Date(endAt).toLocaleTimeString()}{" "}
                     </Box>
+                  </Flex>
+                  <Flex justifyContent="flex-end" mt={4} gap={4}>
+                    {convertStatus(proposal.status)?.label === "Pending" &&
+                      account === proposalDetails?.[index].author && (
+                        <Button colorScheme="red" onClick={() => {}}>
+                          Cancel
+                        </Button>
+                      )}
+                    {convertStatus(proposal.status)?.label === "Approved" && (
+                      <Button
+                        colorScheme="cyan"
+                        onClick={() => {
+                          handleExecute(Number(proposal.id));
+                        }}
+                      >
+                        Execute
+                      </Button>
+                    )}
                   </Flex>
                 </Box>
               );
@@ -225,7 +340,7 @@ export default function Detail() {
       <CreateProposalModal
         isOpen={isOpen}
         onClose={onClose}
-        chainName={chain?.name || "sepolia"}
+        chainName={chainName}
         daoAddress={daoAddress as `0x${string}`}
       />
     </div>
