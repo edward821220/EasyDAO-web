@@ -949,7 +949,7 @@ export const CONTRACT_INFOS = {
     ],
   },
   DividendFacet: {
-    address: "0x2D615c5Fb20822F16537e45f91FCc70D0b321441",
+    address: "0x9107B4Ea4DEE204006202b6Dd61F1068E88d7F2C",
     abi: [
       {
         type: "function",

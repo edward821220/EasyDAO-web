@@ -225,9 +225,15 @@ export default function Detail() {
     vote?.({ args: [proposalId, side] });
   };
 
-  const handleExecute = (proposalId: bigint) => {
+  const handleExecute = (proposalId: bigint, proposalType: string) => {
     if (isLoadingExecute) return;
-    execute?.({ args: [proposalId] });
+    execute?.({
+      args: [proposalId],
+      value:
+        proposalType.split(" ")[0] === "Upgrade"
+          ? BigInt(0.06 * 10 ** 18)
+          : BigInt(0),
+    });
   };
 
   const handleCancel = (proposalId: bigint) => {
@@ -274,14 +280,11 @@ export default function Detail() {
                   border="1px solid gray"
                   borderRadius="12px"
                 >
-                  <Grid
-                    templateColumns={{
-                      lg: "2fr 1fr 2.5fr 3.5fr",
-                      md: "1fr 1fr",
-                      base: "1fr",
-                    }}
-                    columnGap={4}
+                  <Flex
+                    justifyContent="space-between"
+                    flexWrap="wrap"
                     rowGap={2}
+                    columnGap={4}
                     mb={2}
                   >
                     <Flex gap={2} alignItems="baseline">
@@ -300,7 +303,7 @@ export default function Detail() {
                       Description: {proposalEvents?.[index]?.description}
                     </Box>
                     <Box wordBreak="break-all">Author: {proposal.author}</Box>
-                  </Grid>
+                  </Flex>
                   <Box mb={1}>Yes: </Box>
                   <Progress
                     mb={1}
@@ -355,17 +358,21 @@ export default function Detail() {
                           Cancel
                         </Button>
                       )}
-                    {convertStatus(proposal.status)?.label === "Approved" && (
-                      <Button
-                        colorScheme="cyan"
-                        isLoading={isLoadingExecute}
-                        onClick={() => {
-                          handleExecute(proposal.id);
-                        }}
-                      >
-                        Execute
-                      </Button>
-                    )}
+                    {convertStatus(proposal.status)?.label === "Approved" &&
+                      proposalEvents?.[index]?.proposalType !== "Other" && (
+                        <Button
+                          colorScheme="cyan"
+                          isLoading={isLoadingExecute}
+                          onClick={() => {
+                            handleExecute(
+                              proposal.id,
+                              proposalEvents?.[index]?.proposalType
+                            );
+                          }}
+                        >
+                          Execute
+                        </Button>
+                      )}
                   </Flex>
                 </Box>
               );

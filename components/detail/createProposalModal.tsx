@@ -15,8 +15,10 @@ import {
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import MintForm from "./mintForm";
-import UpgradeForm from "./upgradeForm";
+import OwnershipForm from "./ownershipForm";
 import OtherForm from "./otherForm";
+import DividendForm from "./dividendForm";
+import VaultForm from "./vaultForm";
 
 interface CreateDAOModalProps {
   isOpen: boolean;
@@ -26,10 +28,15 @@ interface CreateDAOModalProps {
 }
 export function CreateProposalModal(props: CreateDAOModalProps) {
   const [proposalType, setProposalType] = useState("Mint");
+  const [upgradeType, setUpgradeType] = useState("Ownership");
   const { isOpen, onClose, chainName, daoAddress } = props;
 
-  const handleSelect = (option: string) => {
+  const handleProposalType = (option: string) => {
     setProposalType(option);
+  };
+
+  const handleUpgradeType = (option: string) => {
+    setUpgradeType(option);
   };
 
   return (
@@ -50,11 +57,15 @@ export function CreateProposalModal(props: CreateDAOModalProps) {
                 {proposalType}
               </MenuButton>
               <MenuList>
-                <MenuItem onClick={() => handleSelect("Mint")}>Mint</MenuItem>
-                <MenuItem onClick={() => handleSelect("Upgrade")}>
+                <MenuItem onClick={() => handleProposalType("Mint")}>
+                  Mint
+                </MenuItem>
+                <MenuItem onClick={() => handleProposalType("Upgrade")}>
                   Upgrade
                 </MenuItem>
-                <MenuItem onClick={() => handleSelect("Other")}>Other</MenuItem>
+                <MenuItem onClick={() => handleProposalType("Other")}>
+                  Other
+                </MenuItem>
               </MenuList>
             </Menu>
           </FormControl>
@@ -66,11 +77,52 @@ export function CreateProposalModal(props: CreateDAOModalProps) {
             />
           )}
           {proposalType === "Upgrade" && (
-            <UpgradeForm
-              chainName={chainName}
-              daoAddress={daoAddress}
-              onClose={onClose}
-            />
+            <>
+              <FormControl px={6} mt={4}>
+                <FormLabel>Upgrade Type</FormLabel>
+                <Menu>
+                  <MenuButton
+                    as={Button}
+                    colorScheme="orange"
+                    rightIcon={<ChevronDownIcon />}
+                  >
+                    {upgradeType}
+                  </MenuButton>
+                  <MenuList>
+                    <MenuItem onClick={() => handleUpgradeType("Ownership")}>
+                      Ownership
+                    </MenuItem>
+                    <MenuItem onClick={() => handleUpgradeType("Dividend")}>
+                      Dividend
+                    </MenuItem>
+                    <MenuItem onClick={() => handleUpgradeType("Vault")}>
+                      Vault
+                    </MenuItem>
+                  </MenuList>
+                </Menu>
+              </FormControl>
+              {upgradeType === "Ownership" && (
+                <OwnershipForm
+                  chainName={chainName}
+                  daoAddress={daoAddress}
+                  onClose={onClose}
+                />
+              )}
+              {upgradeType === "Dividend" && (
+                <DividendForm
+                  chainName={chainName}
+                  daoAddress={daoAddress}
+                  onClose={onClose}
+                />
+              )}
+              {upgradeType === "Vault" && (
+                <VaultForm
+                  chainName={chainName}
+                  daoAddress={daoAddress}
+                  onClose={onClose}
+                />
+              )}
+            </>
           )}
           {proposalType === "Other" && (
             <OtherForm
