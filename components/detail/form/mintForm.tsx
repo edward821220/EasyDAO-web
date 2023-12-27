@@ -15,7 +15,7 @@ import {
 import { AddIcon, ExternalLinkIcon, MinusIcon } from "@chakra-ui/icons";
 import { useContractWrite } from "wagmi";
 import { Address, encodeFunctionData } from "viem";
-import { CONTRACT_INFOS } from "../../abi/contracts";
+import { CONTRACT_INFOS } from "../../../abi/contracts";
 
 interface Receiver {
   receiver: string;

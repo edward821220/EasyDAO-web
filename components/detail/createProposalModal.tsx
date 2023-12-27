@@ -14,11 +14,11 @@ import {
   MenuItem,
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
-import MintForm from "./mintForm";
-import OwnershipForm from "./ownershipForm";
-import OtherForm from "./otherForm";
-import DividendForm from "./dividendForm";
-import VaultForm from "./vaultForm";
+import MintForm from "./form/mintForm";
+import OwnershipForm from "./form/ownershipForm";
+import OtherForm from "./form/otherForm";
+import DividendForm from "./form/dividendForm";
+import VaultForm from "./form/vaultForm";
 
 interface CreateDAOModalProps {
   isOpen: boolean;

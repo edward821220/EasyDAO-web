@@ -13,7 +13,7 @@ import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { useContractWrite } from "wagmi";
 import { encodeFunctionData, getFunctionSelector } from "viem";
 import type { AbiFunction } from "abitype";
-import { CONTRACT_INFOS } from "../../abi/contracts";
+import { CONTRACT_INFOS } from "../../../abi/contracts";
 
 interface VaultData {
   description: string;

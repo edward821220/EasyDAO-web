@@ -28,6 +28,25 @@ export default function Detail() {
       router.push("/");
     },
   });
+  const { data: facetAddresses } = useContractRead({
+    chainId,
+    address: daoAddress,
+    abi: CONTRACT_INFOS.DiamondLoupeFacet.abi,
+    functionName: "facetAddresses",
+    watch: true,
+  });
+  const hasUpgradedFeatures =
+    Array.isArray(facetAddresses) && facetAddresses?.length > 3;
+
+  const hasOwnershipFacet = facetAddresses?.includes(
+    CONTRACT_INFOS.OwnershipFacet.address
+  );
+  const hasDividendFacet = facetAddresses?.includes(
+    CONTRACT_INFOS.DividendFacet.address
+  );
+  const hasVaultFacet = facetAddresses?.includes(
+    CONTRACT_INFOS.VaultFacet.address
+  );
 
   if (!isMounted) return null;
 
@@ -48,21 +67,30 @@ export default function Detail() {
               chainId={chainId}
             />
           )}
-          <Heading as="h2" mt={6}>
-            Upgraded Features
-          </Heading>
-          <Flex mt={6} gap={6} flexWrap="wrap">
-            <Button size="lg" colorScheme="yellow">
-              Ownership
-            </Button>
-            <Button size="lg" colorScheme="yellow">
-              Dividend
-            </Button>
-            <Button size="lg" colorScheme="yellow">
-              Vault
-            </Button>
-          </Flex>
-
+          {hasUpgradedFeatures && (
+            <Box>
+              <Heading as="h2" mt={6}>
+                Upgraded Features
+              </Heading>
+              <Flex mt={6} gap={6} flexWrap="wrap">
+                {hasOwnershipFacet && (
+                  <Button size="lg" colorScheme="yellow">
+                    Ownership
+                  </Button>
+                )}
+                {hasDividendFacet && (
+                  <Button size="lg" colorScheme="yellow">
+                    Dividend
+                  </Button>
+                )}
+                {hasVaultFacet && (
+                  <Button size="lg" colorScheme="yellow">
+                    Vault
+                  </Button>
+                )}
+              </Flex>
+            </Box>
+          )}
           <Flex mt={10} alignItems="center">
             <Heading as="h2">Proposals</Heading>
             <Button ml={6} colorScheme="facebook" onClick={onOpen}>
