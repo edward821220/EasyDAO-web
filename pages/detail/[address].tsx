@@ -149,6 +149,7 @@ export default function Detail() {
         onClose={onCloseProposal}
         chainName={chainName}
         daoAddress={daoAddress}
+        facetAddresses={facetAddresses || []}
       />
       <OwnershipModal
         isOpen={isOpenOwnership}

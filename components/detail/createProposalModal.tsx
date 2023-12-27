@@ -20,15 +20,17 @@ import OwnershipForm from "./form/ownershipForm";
 import OtherForm from "./form/otherForm";
 import DividendForm from "./form/dividendForm";
 import VaultForm from "./form/vaultForm";
+import { CONTRACT_INFOS } from "../../abi/contracts";
 
 interface CreateDAOModalProps {
   isOpen: boolean;
   onClose: () => void;
   chainName: string;
   daoAddress: Address;
+  facetAddresses: readonly Address[];
 }
 export function CreateProposalModal(props: CreateDAOModalProps) {
-  const { isOpen, onClose, chainName, daoAddress } = props;
+  const { isOpen, onClose, chainName, daoAddress, facetAddresses } = props;
   const [proposalType, setProposalType] = useState("Mint");
   const [upgradeType, setUpgradeType] = useState("Ownership");
 
@@ -39,6 +41,17 @@ export function CreateProposalModal(props: CreateDAOModalProps) {
   const handleUpgradeType = (option: string) => {
     setUpgradeType(option);
   };
+
+  const hasOwnershipFacet = facetAddresses?.includes(
+    CONTRACT_INFOS.OwnershipFacet.address
+  );
+  const hasDividendFacet = facetAddresses?.includes(
+    CONTRACT_INFOS.DividendFacet.address
+  );
+  const hasVaultFacet = facetAddresses?.includes(
+    CONTRACT_INFOS.VaultFacet.address
+  );
+  const hasAllFacets = hasOwnershipFacet && hasDividendFacet && hasVaultFacet;
 
   return (
     <>
@@ -61,9 +74,11 @@ export function CreateProposalModal(props: CreateDAOModalProps) {
                 <MenuItem onClick={() => handleProposalType("Mint")}>
                   Mint
                 </MenuItem>
-                <MenuItem onClick={() => handleProposalType("Upgrade")}>
-                  Upgrade
-                </MenuItem>
+                {!hasAllFacets && (
+                  <MenuItem onClick={() => handleProposalType("Upgrade")}>
+                    Upgrade
+                  </MenuItem>
+                )}
                 <MenuItem onClick={() => handleProposalType("Other")}>
                   Other
                 </MenuItem>
@@ -90,15 +105,21 @@ export function CreateProposalModal(props: CreateDAOModalProps) {
                     {upgradeType}
                   </MenuButton>
                   <MenuList>
-                    <MenuItem onClick={() => handleUpgradeType("Ownership")}>
-                      Ownership
-                    </MenuItem>
-                    <MenuItem onClick={() => handleUpgradeType("Dividend")}>
-                      Dividend
-                    </MenuItem>
-                    <MenuItem onClick={() => handleUpgradeType("Vault")}>
-                      Vault
-                    </MenuItem>
+                    {!hasOwnershipFacet && (
+                      <MenuItem onClick={() => handleUpgradeType("Ownership")}>
+                        Ownership
+                      </MenuItem>
+                    )}
+                    {!hasDividendFacet && (
+                      <MenuItem onClick={() => handleUpgradeType("Dividend")}>
+                        Dividend
+                      </MenuItem>
+                    )}
+                    {!hasVaultFacet && (
+                      <MenuItem onClick={() => handleUpgradeType("Vault")}>
+                        Vault
+                      </MenuItem>
+                    )}
                   </MenuList>
                 </Menu>
               </FormControl>
