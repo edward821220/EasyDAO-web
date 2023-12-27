@@ -92,7 +92,7 @@ export function CreateProposalModal(props: CreateDAOModalProps) {
               onClose={onClose}
             />
           )}
-          {proposalType === "Upgrade" && (
+          {!hasAllFacets && proposalType === "Upgrade" && (
             <>
               <FormControl px={6} mt={4}>
                 <FormLabel>Upgrade Type</FormLabel>

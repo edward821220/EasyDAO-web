@@ -25,9 +25,11 @@ interface DividendProps {
   chainName: string;
   daoAddress: Address;
   onClose: () => void;
+  isOwner?: boolean;
 }
 
-function DividendForm({ chainName, daoAddress, onClose }: DividendProps) {
+function DividendForm(props: DividendProps) {
+  const { chainName, daoAddress, onClose, isOwner } = props;
   const toast = useToast();
   const { register, handleSubmit, reset } = useForm<DividendData>({
     defaultValues: {
@@ -37,39 +39,76 @@ function DividendForm({ chainName, daoAddress, onClose }: DividendProps) {
     },
   });
 
-  const { isLoading, write } = useContractWrite({
-    address: daoAddress,
-    abi: CONTRACT_INFOS.DaoFacet.abi,
-    functionName: "createProposal",
-    onSuccess: (data) => {
-      toast({
-        title: "Transaction succeeded",
-        description: (
-          <Link
-            href={`https://${chainName.toLowerCase()}.etherscan.io/tx/${
-              data?.hash
-            }`}
-            isExternal
-          >
-            Proposal Created <ExternalLinkIcon mx="2px" />
-          </Link>
-        ),
-        status: "success",
-        duration: 10000,
-        isClosable: true,
-      });
-    },
-    onError: () => {
-      toast({
-        title: "Transaction failed",
-        description: "Proposal creation failed",
-        status: "error",
-        duration: 10000,
-        isClosable: true,
-      });
-    },
-  });
+  const { isLoading: isLoadingCreateProposal, write: createProposal } =
+    useContractWrite({
+      address: daoAddress,
+      abi: CONTRACT_INFOS.DaoFacet.abi,
+      functionName: "createProposal",
+      onSuccess: (data) => {
+        toast({
+          title: "Transaction succeeded",
+          description: (
+            <Link
+              href={`https://${chainName.toLowerCase()}.etherscan.io/tx/${
+                data?.hash
+              }`}
+              isExternal
+            >
+              Proposal Created <ExternalLinkIcon mx="2px" />
+            </Link>
+          ),
+          status: "success",
+          duration: 10000,
+          isClosable: true,
+        });
+      },
+      onError: () => {
+        toast({
+          title: "Transaction failed",
+          description: "Proposal creation failed",
+          status: "error",
+          duration: 10000,
+          isClosable: true,
+        });
+      },
+    });
 
+  const { isLoading: isLoadingDiamondCut, write: diamondCut } =
+    useContractWrite({
+      address: daoAddress,
+      abi: CONTRACT_INFOS.DiamondCutFacet.abi,
+      functionName: "diamondCut",
+      onSuccess: (data) => {
+        toast({
+          title: "Transaction succeeded",
+          description: (
+            <Link
+              href={`https://${chainName.toLowerCase()}.etherscan.io/tx/${
+                data?.hash
+              }`}
+              isExternal
+            >
+              Upgrade Succeeded
+              <ExternalLinkIcon mx="2px" />
+            </Link>
+          ),
+          status: "success",
+          duration: 10000,
+          isClosable: true,
+        });
+      },
+      onError: () => {
+        toast({
+          title: "Transaction failed",
+          description: "Upgrade failed",
+          status: "error",
+          duration: 10000,
+          isClosable: true,
+        });
+      },
+    });
+
+  const isLoading = isLoadingCreateProposal || isLoadingDiamondCut;
   const onSubmit = (formData: DividendData) => {
     if (isLoading) return;
     const functionSelectors = (
@@ -92,15 +131,22 @@ function DividendForm({ chainName, daoAddress, onClose }: DividendProps) {
         formData.annualRate,
       ],
     });
-    const diamondCutData = encodeFunctionData({
-      abi: CONTRACT_INFOS.DiamondCutFacet.abi,
-      functionName: "diamondCutByProposal",
-      args: [cut, CONTRACT_INFOS.DividendInit.address, initData],
-    });
+    if (isOwner) {
+      diamondCut?.({
+        args: [cut, CONTRACT_INFOS.DividendInit.address, initData],
+        value: BigInt(0.06 * 10 ** 18),
+      });
+    } else {
+      const diamondCutData = encodeFunctionData({
+        abi: CONTRACT_INFOS.DiamondCutFacet.abi,
+        functionName: "diamondCutByProposal",
+        args: [cut, CONTRACT_INFOS.DividendInit.address, initData],
+      });
 
-    write?.({
-      args: [diamondCutData, "Upgrade Dividend", formData.description],
-    });
+      createProposal?.({
+        args: [diamondCutData, "Upgrade Dividend", formData.description],
+      });
+    }
 
     toast({
       title: "Transaction submitted",

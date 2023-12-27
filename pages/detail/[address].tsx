@@ -156,6 +156,7 @@ export default function Detail() {
         onClose={onCloseOwnership}
         chainName={chainName}
         daoAddress={daoAddress}
+        facetAddresses={facetAddresses || []}
       />
     </div>
   );
