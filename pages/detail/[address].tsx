@@ -1,17 +1,36 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { Box, Button, Flex, Heading, useDisclosure } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  useDisclosure,
+  useToast,
+} from "@chakra-ui/react";
 import { Address } from "viem";
 import { useAccount, useNetwork, useContractRead } from "wagmi";
+import { readContract } from "@wagmi/core";
 import { useIsMounted } from "../../hooks/useIsMounted";
 import { CONTRACT_INFOS } from "../../abi/contracts";
 import { CreateProposalModal } from "../../components/detail/createProposalModal";
 import Overview from "../../components/detail/overview";
 import ProposalsList from "../../components/detail/proposalsList";
+import OwnershipModal from "../../components/detail/ownershipModal";
 
 export default function Detail() {
+  const toast = useToast();
   const isMounted = useIsMounted();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isOpenProposal,
+    onOpen: onOpenProposal,
+    onClose: onCloseProposal,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenOwnership,
+    onOpen: onOpenOwnership,
+    onClose: onCloseOwnership,
+  } = useDisclosure();
   const router = useRouter();
   const { chain } = useNetwork();
   const { address: account } = useAccount() as { address: Address };
@@ -74,7 +93,27 @@ export default function Detail() {
               </Heading>
               <Flex mt={6} gap={6} flexWrap="wrap">
                 {hasOwnershipFacet && (
-                  <Button size="lg" colorScheme="yellow">
+                  <Button
+                    size="lg"
+                    colorScheme="yellow"
+                    onClick={async () => {
+                      const owner = await readContract({
+                        address: daoAddress,
+                        abi: CONTRACT_INFOS.OwnershipFacet.abi,
+                        functionName: "owner",
+                      });
+                      if (owner === account) {
+                        onOpenOwnership();
+                      } else {
+                        toast({
+                          title: "You are not the owner of this DAO",
+                          status: "error",
+                          duration: 5000,
+                          isClosable: true,
+                        });
+                      }
+                    }}
+                  >
                     Ownership
                   </Button>
                 )}
@@ -93,7 +132,7 @@ export default function Detail() {
           )}
           <Flex mt={10} alignItems="center">
             <Heading as="h2">Proposals</Heading>
-            <Button ml={6} colorScheme="facebook" onClick={onOpen}>
+            <Button ml={6} colorScheme="facebook" onClick={onOpenProposal}>
               Create Proposal
             </Button>
           </Flex>
@@ -106,8 +145,14 @@ export default function Detail() {
         </Box>
       </Box>
       <CreateProposalModal
-        isOpen={isOpen}
-        onClose={onClose}
+        isOpen={isOpenProposal}
+        onClose={onCloseProposal}
+        chainName={chainName}
+        daoAddress={daoAddress}
+      />
+      <OwnershipModal
+        isOpen={isOpenOwnership}
+        onClose={onCloseOwnership}
         chainName={chainName}
         daoAddress={daoAddress}
       />

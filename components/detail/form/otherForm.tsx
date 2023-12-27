@@ -10,7 +10,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
-import { useContractWrite } from "wagmi";
+import { Address, useContractWrite } from "wagmi";
 import { CONTRACT_INFOS } from "../../../abi/contracts";
 
 interface OtherFormData {
@@ -19,7 +19,7 @@ interface OtherFormData {
 
 interface OtherFormProps {
   chainName: string;
-  daoAddress: `0x${string}`;
+  daoAddress: Address;
   onClose: () => void;
 }
 

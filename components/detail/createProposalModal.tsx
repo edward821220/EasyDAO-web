@@ -14,6 +14,7 @@ import {
   MenuItem,
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
+import { Address } from "viem";
 import MintForm from "./form/mintForm";
 import OwnershipForm from "./form/ownershipForm";
 import OtherForm from "./form/otherForm";
@@ -24,12 +25,12 @@ interface CreateDAOModalProps {
   isOpen: boolean;
   onClose: () => void;
   chainName: string;
-  daoAddress: `0x${string}`;
+  daoAddress: Address;
 }
 export function CreateProposalModal(props: CreateDAOModalProps) {
+  const { isOpen, onClose, chainName, daoAddress } = props;
   const [proposalType, setProposalType] = useState("Mint");
   const [upgradeType, setUpgradeType] = useState("Ownership");
-  const { isOpen, onClose, chainName, daoAddress } = props;
 
   const handleProposalType = (option: string) => {
     setProposalType(option);

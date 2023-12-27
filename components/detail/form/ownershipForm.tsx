@@ -23,11 +23,17 @@ interface OwnershipData {
 
 interface OwnershipProps {
   chainName: string;
-  daoAddress: `0x${string}`;
+  daoAddress: Address;
   onClose: () => void;
+  isOwner?: boolean;
 }
 
-function OwnershipForm({ chainName, daoAddress, onClose }: OwnershipProps) {
+function OwnershipForm({
+  chainName,
+  daoAddress,
+  onClose,
+  isOwner,
+}: OwnershipProps) {
   const toast = useToast();
   const {
     register,
@@ -41,67 +47,109 @@ function OwnershipForm({ chainName, daoAddress, onClose }: OwnershipProps) {
     },
   });
 
-  const { isLoading, write } = useContractWrite({
-    address: daoAddress,
-    abi: CONTRACT_INFOS.DaoFacet.abi,
-    functionName: "createProposal",
-    onSuccess: (data) => {
-      toast({
-        title: "Transaction succeeded",
-        description: (
-          <Link
-            href={`https://${chainName.toLowerCase()}.etherscan.io/tx/${
-              data?.hash
-            }`}
-            isExternal
-          >
-            Proposal Created <ExternalLinkIcon mx="2px" />
-          </Link>
-        ),
-        status: "success",
-        duration: 10000,
-        isClosable: true,
-      });
-    },
-    onError: () => {
-      toast({
-        title: "Transaction failed",
-        description: "Proposal creation failed",
-        status: "error",
-        duration: 10000,
-        isClosable: true,
-      });
-    },
-  });
+  const { isLoading: isLoadingCreateProposal, write: createProposal } =
+    useContractWrite({
+      address: daoAddress,
+      abi: CONTRACT_INFOS.DaoFacet.abi,
+      functionName: "createProposal",
+      onSuccess: (data) => {
+        toast({
+          title: "Transaction succeeded",
+          description: (
+            <Link
+              href={`https://${chainName.toLowerCase()}.etherscan.io/tx/${
+                data?.hash
+              }`}
+              isExternal
+            >
+              Proposal Created <ExternalLinkIcon mx="2px" />
+            </Link>
+          ),
+          status: "success",
+          duration: 10000,
+          isClosable: true,
+        });
+      },
+      onError: () => {
+        toast({
+          title: "Transaction failed",
+          description: "Proposal creation failed",
+          status: "error",
+          duration: 10000,
+          isClosable: true,
+        });
+      },
+    });
 
+  const { isLoading: isLoadingTransferOwnership, write: transferOwnership } =
+    useContractWrite({
+      address: daoAddress,
+      abi: CONTRACT_INFOS.OwnershipFacet.abi,
+      functionName: "transferOwnership",
+      onSuccess: (data) => {
+        toast({
+          title: "Transaction succeeded",
+          description: (
+            <Link
+              href={`https://${chainName.toLowerCase()}.etherscan.io/tx/${
+                data?.hash
+              }`}
+              isExternal
+            >
+              Owner Transferred <ExternalLinkIcon mx="2px" />
+            </Link>
+          ),
+          status: "success",
+          duration: 10000,
+          isClosable: true,
+        });
+      },
+      onError: () => {
+        toast({
+          title: "Transaction failed",
+          description: "Owner transfer failed",
+          status: "error",
+          duration: 10000,
+          isClosable: true,
+        });
+      },
+    });
+  const isLoading = isLoadingCreateProposal || isLoadingTransferOwnership;
   const onSubmit = (formData: OwnershipData) => {
     if (isLoading) return;
-    const functionSelectors = (
-      CONTRACT_INFOS.OwnershipFacet.abi.filter(
-        (abi) => abi.type === "function"
-      ) as AbiFunction[]
-    ).map(getFunctionSelector);
-    const cut = [
-      {
-        facetAddress: CONTRACT_INFOS.OwnershipFacet.address,
-        action: 0,
-        functionSelectors,
-      },
-    ];
-    const initData = encodeFunctionData({
-      abi: CONTRACT_INFOS.OwnershipInit.abi,
-      functionName: "init",
-      args: [formData.owner as Address],
-    });
-    const diamondCutData = encodeFunctionData({
-      abi: CONTRACT_INFOS.DiamondCutFacet.abi,
-      functionName: "diamondCutByProposal",
-      args: [cut, CONTRACT_INFOS.OwnershipInit.address, initData],
-    });
 
-    write?.({
-      args: [diamondCutData, "Upgrade Ownership", formData.description],
-    });
+    if (isOwner) {
+      transferOwnership?.({
+        args: [formData.owner as Address],
+      });
+    } else {
+      const functionSelectors = (
+        CONTRACT_INFOS.OwnershipFacet.abi.filter(
+          (abi) => abi.type === "function"
+        ) as AbiFunction[]
+      ).map(getFunctionSelector);
+      const cut = [
+        {
+          facetAddress: CONTRACT_INFOS.OwnershipFacet.address,
+          action: 0,
+          functionSelectors,
+        },
+      ];
+      const initData = encodeFunctionData({
+        abi: CONTRACT_INFOS.OwnershipInit.abi,
+        functionName: "init",
+        args: [formData.owner as Address],
+      });
+      const diamondCutData = encodeFunctionData({
+        abi: CONTRACT_INFOS.DiamondCutFacet.abi,
+        functionName: "diamondCutByProposal",
+        args: [cut, CONTRACT_INFOS.OwnershipInit.address, initData],
+      });
+
+      createProposal?.({
+        args: [diamondCutData, "Upgrade Ownership", formData.description],
+      });
+    }
 
     toast({
       title: "Transaction submitted",
@@ -118,13 +166,17 @@ function OwnershipForm({ chainName, daoAddress, onClose }: OwnershipProps) {
     <form key="OwnershipForm" onSubmit={handleSubmit(onSubmit)}>
       <ModalBody>
         <FormControl>
-          <FormLabel mt={4}>Proposal Description</FormLabel>
-          <Input
-            required
-            mb={1}
-            placeholder={"Proposal Description"}
-            {...register("description")}
-          />
+          {!isOwner && (
+            <>
+              <FormLabel mt={4}>Proposal Description</FormLabel>
+              <Input
+                required
+                mb={1}
+                placeholder={"Proposal Description"}
+                {...register("description")}
+              />
+            </>
+          )}
           <FormLabel mt={4}>New Owner</FormLabel>
           <Input
             required

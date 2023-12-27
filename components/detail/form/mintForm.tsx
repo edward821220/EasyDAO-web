@@ -28,7 +28,7 @@ interface MintFormData {
 
 interface MintFormProps {
   chainName: string;
-  daoAddress: `0x${string}`;
+  daoAddress: Address;
   onClose: () => void;
 }
 

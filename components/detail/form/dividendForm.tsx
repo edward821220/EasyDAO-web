@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { useContractWrite } from "wagmi";
-import { encodeFunctionData, getFunctionSelector } from "viem";
+import { Address, encodeFunctionData, getFunctionSelector } from "viem";
 import type { AbiFunction } from "abitype";
 import { CONTRACT_INFOS } from "../../../abi/contracts";
 
@@ -23,7 +23,7 @@ interface DividendData {
 
 interface DividendProps {
   chainName: string;
-  daoAddress: `0x${string}`;
+  daoAddress: Address;
   onClose: () => void;
 }
 
