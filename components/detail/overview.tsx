@@ -1,14 +1,20 @@
 import { ListItem, UnorderedList } from "@chakra-ui/react";
-import { Address, useBalance, useContractRead, useToken } from "wagmi";
+import { formatEther } from "viem";
+import { Address, useContractRead, useToken } from "wagmi";
 import { CONTRACT_INFOS } from "../../abi/contracts";
 
 interface OverviewProps {
   daoAddress: Address;
   daoName: string;
-  account: Address;
+  tokenBalance: string;
   chainId: number;
 }
-function Overview({ daoAddress, daoName, account, chainId }: OverviewProps) {
+function Overview({
+  daoAddress,
+  daoName,
+  tokenBalance,
+  chainId,
+}: OverviewProps) {
   const contract = {
     address: daoAddress,
     abi: CONTRACT_INFOS.DaoFacet.abi,
@@ -20,20 +26,15 @@ function Overview({ daoAddress, daoName, account, chainId }: OverviewProps) {
     watch: true,
   });
   const { data: tokenData } = useToken(contract);
-  const { data: tokenBalance } = useBalance({
-    address: account,
-    token: contract.address,
-    chainId: contract.chainId,
-    watch: true,
-  });
+
   return (
     <UnorderedList mt={6} fontSize="20px" spacing={2}>
       <ListItem>Organization Name: {daoName}</ListItem>
       <ListItem>Contract Address: {daoAddress}</ListItem>
       <ListItem>Token Name: {tokenData?.name}</ListItem>
       <ListItem>Token Symbol: {tokenData?.symbol}</ListItem>
-      <ListItem>Total Supply: {Number(totalSupply) / 10 ** 18}</ListItem>
-      <ListItem>Your Balance: {tokenBalance?.formatted}</ListItem>
+      <ListItem>Total Supply: {formatEther(totalSupply || BigInt(0))}</ListItem>
+      <ListItem>Your Balance: {tokenBalance}</ListItem>
     </UnorderedList>
   );
 }

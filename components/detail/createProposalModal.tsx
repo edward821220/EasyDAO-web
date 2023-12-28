@@ -29,7 +29,7 @@ interface CreateDAOModalProps {
   daoAddress: Address;
   facetAddresses: readonly Address[];
 }
-export function CreateProposalModal(props: CreateDAOModalProps) {
+export default function CreateProposalModal(props: CreateDAOModalProps) {
   const { isOpen, onClose, chainName, daoAddress, facetAddresses } = props;
   const [proposalType, setProposalType] = useState("Mint");
   const [upgradeType, setUpgradeType] = useState("Ownership");

@@ -8,15 +8,17 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
+import { AddIcon } from "@chakra-ui/icons";
 import { Address } from "viem";
-import { useAccount, useNetwork, useContractRead } from "wagmi";
+import { useAccount, useNetwork, useContractRead, useBalance } from "wagmi";
 import { readContract } from "@wagmi/core";
 import { useIsMounted } from "../../hooks/useIsMounted";
 import { CONTRACT_INFOS } from "../../abi/contracts";
-import { CreateProposalModal } from "../../components/detail/createProposalModal";
 import Overview from "../../components/detail/overview";
 import ProposalsList from "../../components/detail/proposalsList";
+import CreateProposalModal from "../../components/detail/createProposalModal";
 import OwnershipModal from "../../components/detail/ownershipModal";
+import DividendModal from "../../components/detail/dividendModal";
 
 export default function Detail() {
   const toast = useToast();
@@ -30,6 +32,11 @@ export default function Detail() {
     isOpen: isOpenOwnership,
     onOpen: onOpenOwnership,
     onClose: onCloseOwnership,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenDividend,
+    onOpen: onOpenDividend,
+    onClose: onCloseDividend,
   } = useDisclosure();
   const router = useRouter();
   const { chain } = useNetwork();
@@ -47,6 +54,14 @@ export default function Detail() {
       router.push("/");
     },
   });
+
+  const { data: tokenBalance } = useBalance({
+    address: account,
+    token: daoAddress,
+    chainId: chainId,
+    watch: true,
+  });
+
   const { data: facetAddresses } = useContractRead({
     chainId,
     address: daoAddress,
@@ -82,7 +97,7 @@ export default function Detail() {
             <Overview
               daoName={daoName}
               daoAddress={daoAddress}
-              account={account}
+              tokenBalance={tokenBalance?.formatted || "0"}
               chainId={chainId}
             />
           )}
@@ -95,7 +110,7 @@ export default function Detail() {
                 {hasOwnershipFacet && (
                   <Button
                     size="lg"
-                    colorScheme="yellow"
+                    colorScheme="facebook"
                     onClick={async () => {
                       const owner = await readContract({
                         address: daoAddress,
@@ -118,12 +133,16 @@ export default function Detail() {
                   </Button>
                 )}
                 {hasDividendFacet && (
-                  <Button size="lg" colorScheme="yellow">
+                  <Button
+                    size="lg"
+                    colorScheme="facebook"
+                    onClick={() => onOpenDividend()}
+                  >
                     Dividend
                   </Button>
                 )}
                 {hasVaultFacet && (
-                  <Button size="lg" colorScheme="yellow">
+                  <Button size="lg" colorScheme="facebook">
                     Vault
                   </Button>
                 )}
@@ -132,9 +151,24 @@ export default function Detail() {
           )}
           <Flex mt={10} alignItems="center">
             <Heading as="h2">Proposals</Heading>
-            <Button ml={6} colorScheme="facebook" onClick={onOpenProposal}>
-              Create Proposal
-            </Button>
+            <AddIcon
+              ml={4}
+              boxSize={6}
+              cursor="pointer"
+              onClick={() => {
+                if (tokenBalance && Number(tokenBalance?.formatted) >= 100) {
+                  onOpenProposal();
+                  return;
+                } else {
+                  toast({
+                    title: "You don't have enough tokens.",
+                    status: "error",
+                    duration: 5000,
+                    isClosable: true,
+                  });
+                }
+              }}
+            />
           </Flex>
           <ProposalsList
             chainId={chainId}
@@ -151,13 +185,25 @@ export default function Detail() {
         daoAddress={daoAddress}
         facetAddresses={facetAddresses || []}
       />
-      <OwnershipModal
-        isOpen={isOpenOwnership}
-        onClose={onCloseOwnership}
-        chainName={chainName}
-        daoAddress={daoAddress}
-        facetAddresses={facetAddresses || []}
-      />
+      {hasOwnershipFacet && (
+        <OwnershipModal
+          isOpen={isOpenOwnership}
+          onClose={onCloseOwnership}
+          chainName={chainName}
+          daoAddress={daoAddress}
+          facetAddresses={facetAddresses || []}
+        />
+      )}
+      {hasDividendFacet && (
+        <DividendModal
+          isOpen={isOpenDividend}
+          onClose={onCloseDividend}
+          chainId={chainId}
+          chainName={chainName}
+          account={account}
+          daoAddress={daoAddress}
+        />
+      )}
     </div>
   );
 }
