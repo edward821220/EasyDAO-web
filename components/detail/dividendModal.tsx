@@ -9,13 +9,13 @@ import {
   ModalFooter,
   UnorderedList,
   ListItem,
-  useToast,
   Link,
+  useToast,
 } from "@chakra-ui/react";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { Address, formatEther } from "viem";
 import { useContractRead, useContractWrite } from "wagmi";
 import { CONTRACT_INFOS } from "../../abi/contracts";
-import { ExternalLinkIcon } from "@chakra-ui/icons";
 
 interface DividendModalProps {
   isOpen: boolean;

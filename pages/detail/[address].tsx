@@ -19,6 +19,7 @@ import ProposalsList from "../../components/detail/proposalsList";
 import CreateProposalModal from "../../components/detail/createProposalModal";
 import OwnershipModal from "../../components/detail/ownershipModal";
 import DividendModal from "../../components/detail/dividendModal";
+import VaultDrawer from "../../components/detail/vaultDrawer";
 
 export default function Detail() {
   const toast = useToast();
@@ -37,6 +38,11 @@ export default function Detail() {
     isOpen: isOpenDividend,
     onOpen: onOpenDividend,
     onClose: onCloseDividend,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenVault,
+    onOpen: onOpenVault,
+    onClose: onCloseVault,
   } = useDisclosure();
   const router = useRouter();
   const { chain } = useNetwork();
@@ -136,13 +142,17 @@ export default function Detail() {
                   <Button
                     size="lg"
                     colorScheme="facebook"
-                    onClick={() => onOpenDividend()}
+                    onClick={onOpenDividend}
                   >
                     Dividend
                   </Button>
                 )}
                 {hasVaultFacet && (
-                  <Button size="lg" colorScheme="facebook">
+                  <Button
+                    size="lg"
+                    colorScheme="facebook"
+                    onClick={onOpenVault}
+                  >
                     Vault
                   </Button>
                 )}
@@ -201,6 +211,17 @@ export default function Detail() {
           chainId={chainId}
           chainName={chainName}
           account={account}
+          daoAddress={daoAddress}
+        />
+      )}
+      {hasVaultFacet && (
+        <VaultDrawer
+          isOpen={isOpenVault}
+          onClose={onCloseVault}
+          chainId={chainId}
+          chainName={chainName}
+          account={account}
+          tokenBalance={Number(tokenBalance?.formatted) || 0}
           daoAddress={daoAddress}
         />
       )}
