@@ -126,7 +126,7 @@ function DividendForm(props: DividendProps) {
     const initData = encodeFunctionData({
       abi: CONTRACT_INFOS.DividendInit.abi,
       functionName: "init",
-      args: [BigInt(Number(formData.duration) * 86400), formData.annualRate],
+      args: [BigInt(Number(formData.duration) * 604800), formData.annualRate],
     });
     if (isOwner) {
       diamondCut?.({
@@ -167,13 +167,13 @@ function DividendForm(props: DividendProps) {
             placeholder={"Proposal Description"}
             {...register("description")}
           />
-          <FormLabel mt={4}>Duration (Days)</FormLabel>
+          <FormLabel mt={4}>Duration (Weeks)</FormLabel>
           <Input
             mb={1}
             required
             type="number"
             min={1}
-            placeholder={"Duration (Days)"}
+            placeholder={"Duration (Weeks)"}
             {...register("duration")}
           />
           <FormLabel mt={4}>Annual Rate (%)</FormLabel>

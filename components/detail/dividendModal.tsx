@@ -107,8 +107,8 @@ function DividendModal(props: DividendModalProps) {
             <UnorderedList>
               <ListItem>{`Annual Rate: ${annualRate}%`}</ListItem>
               <ListItem>{`Duration: ${
-                Number(duration) / 86400
-              } Days`}</ListItem>
+                Number(duration) / 604800
+              } Weeks`}</ListItem>
               <ListItem>
                 {`Initial Balance: ${formatEther(initialBalance || BigInt(0))}`}
               </ListItem>
