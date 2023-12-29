@@ -15,10 +15,10 @@ import {
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { Address } from "viem";
+import { CONTRACT_INFOS } from "../../abi/contracts";
 import OwnershipForm from "./form/ownershipForm";
 import DividendForm from "./form/dividendForm";
 import VaultForm from "./form/vaultForm";
-import { CONTRACT_INFOS } from "../../abi/contracts";
 
 interface OwnershipModalProps {
   isOpen: boolean;

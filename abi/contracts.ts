@@ -1,6 +1,6 @@
 export const CONTRACT_INFOS = {
   DiamondFactory: {
-    address: "0x387D764668DfFE58D746b3365cb588b76dbc8bbA",
+    address: "0x0AfbF2d32cD109c549DdD01431EE0E034Ff5CeC7",
     abi: [
       { type: "constructor", inputs: [], stateMutability: "nonpayable" },
       { type: "fallback", stateMutability: "payable" },
@@ -176,7 +176,7 @@ export const CONTRACT_INFOS = {
     ],
   },
   DiamondCutFacet: {
-    address: "0x0ebebE0CfD9733B9268aF75fBf2086b18f47671d",
+    address: "0x1ECB09022Bc800A65a7Ebd27C0ba692B6Cf78a09",
     abi: [
       {
         type: "function",
@@ -425,7 +425,7 @@ export const CONTRACT_INFOS = {
     ],
   },
   DaoFacet: {
-    address: "0x08C5F8b5A23370E8981Fe1f498AF506AB81CB57c",
+    address: "0x586E54C86990A3b97c1247bD9fd98A4069cC48D1",
     abi: [
       {
         type: "function",
@@ -806,7 +806,7 @@ export const CONTRACT_INFOS = {
     ],
   },
   DaoInit: {
-    address: "0xa3BbE6336A58cd96CDF1316FF926e0E42D26F5d4",
+    address: "0xd4947EaAef47035F1B6215040d4c32B89A20CC37",
     abi: [
       {
         type: "function",
@@ -949,7 +949,7 @@ export const CONTRACT_INFOS = {
     ],
   },
   DividendFacet: {
-    address: "0x9107B4Ea4DEE204006202b6Dd61F1068E88d7F2C",
+    address: "0x65993d2EaFB88aD8c64E31eaBdEB73FB0f6B66AA",
     abi: [
       {
         type: "function",
@@ -1049,7 +1049,7 @@ export const CONTRACT_INFOS = {
     ],
   },
   DividendInit: {
-    address: "0xA0CA0361751b41D1FF515DAE966bF437b3f73f28",
+    address: "0x634e7C7888B571D468703E4C73b1Eaf347D46D38",
     abi: [
       {
         type: "function",
@@ -1064,7 +1064,7 @@ export const CONTRACT_INFOS = {
     ],
   },
   VaultFacet: {
-    address: "0x5790D013724f35bb28f5bde98ceA3F0f7cdFCd80",
+    address: "0x8E8180Dd4888A4Cd31a4B211890BF1878AEBA489",
     abi: [
       {
         type: "function",
@@ -1252,16 +1252,6 @@ export const CONTRACT_INFOS = {
       },
       {
         type: "function",
-        name: "withdrawNFTByOwner",
-        inputs: [
-          { name: "NFTContract", type: "address", internalType: "address" },
-          { name: "tokenId", type: "uint256", internalType: "uint256" },
-        ],
-        outputs: [],
-        stateMutability: "nonpayable",
-      },
-      {
-        type: "function",
         name: "withdrawETHByProposal",
         inputs: [
           { name: "to", type: "address", internalType: "address" },
@@ -1270,10 +1260,20 @@ export const CONTRACT_INFOS = {
         outputs: [],
         stateMutability: "nonpayable",
       },
+      {
+        type: "function",
+        name: "withdrawNFTByOwner",
+        inputs: [
+          { name: "NFTContract", type: "address", internalType: "address" },
+          { name: "tokenId", type: "uint256", internalType: "uint256" },
+        ],
+        outputs: [],
+        stateMutability: "nonpayable",
+      },
     ],
   },
   VaultInit: {
-    address: "0x0Fa9DD0d42cda3Dcc67A9835E82b38672613d644",
+    address: "0x361D70747955aa4141de3A7e8Dd2E91023F4116E",
     abi: [
       {
         type: "function",
