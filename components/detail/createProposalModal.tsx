@@ -21,7 +21,9 @@ import OtherForm from "./form/otherForm";
 import DividendForm from "./form/dividendForm";
 import VaultForm from "./form/vaultForm";
 import { CONTRACT_INFOS } from "../../abi/contracts";
+import DowngradeForm from "./form/downgradeForm";
 
+type FacetType = "Ownership" | "Dividend" | "Vault";
 interface CreateDAOModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -32,14 +34,18 @@ interface CreateDAOModalProps {
 export default function CreateProposalModal(props: CreateDAOModalProps) {
   const { isOpen, onClose, chainName, daoAddress, facetAddresses } = props;
   const [proposalType, setProposalType] = useState("Mint");
-  const [upgradeType, setUpgradeType] = useState("Ownership");
+  const [upgradeType, setUpgradeType] = useState<FacetType | "">("");
+  const [downgradeType, setDowngradeType] = useState<FacetType | "">("");
 
   const handleProposalType = (option: string) => {
     setProposalType(option);
   };
 
-  const handleUpgradeType = (option: string) => {
+  const handleUpgradeType = (option: FacetType) => {
     setUpgradeType(option);
+  };
+  const handleDowngradeType = (option: FacetType) => {
+    setDowngradeType(option);
   };
 
   const hasOwnershipFacet = facetAddresses?.includes(
@@ -51,6 +57,7 @@ export default function CreateProposalModal(props: CreateDAOModalProps) {
   const hasVaultFacet = facetAddresses?.includes(
     CONTRACT_INFOS.VaultFacet.address
   );
+  const hasSomeFacets = hasOwnershipFacet || hasDividendFacet || hasVaultFacet;
   const hasAllFacets = hasOwnershipFacet && hasDividendFacet && hasVaultFacet;
 
   return (
@@ -79,6 +86,11 @@ export default function CreateProposalModal(props: CreateDAOModalProps) {
                     Upgrade
                   </MenuItem>
                 )}
+                {hasSomeFacets && (
+                  <MenuItem onClick={() => handleProposalType("Downgrade")}>
+                    Downgrade
+                  </MenuItem>
+                )}
                 <MenuItem onClick={() => handleProposalType("Other")}>
                   Other
                 </MenuItem>
@@ -102,7 +114,7 @@ export default function CreateProposalModal(props: CreateDAOModalProps) {
                     colorScheme="orange"
                     rightIcon={<ChevronDownIcon />}
                   >
-                    {upgradeType}
+                    {upgradeType || "Select Upgrade Type"}
                   </MenuButton>
                   <MenuList>
                     {!hasOwnershipFacet && (
@@ -142,6 +154,49 @@ export default function CreateProposalModal(props: CreateDAOModalProps) {
                   chainName={chainName}
                   daoAddress={daoAddress}
                   onClose={onClose}
+                />
+              )}
+            </>
+          )}
+          {hasSomeFacets && proposalType === "Downgrade" && (
+            <>
+              <FormControl px={6} mt={4}>
+                <FormLabel>Downgrade Type</FormLabel>
+                <Menu>
+                  <MenuButton
+                    as={Button}
+                    colorScheme="orange"
+                    rightIcon={<ChevronDownIcon />}
+                  >
+                    {downgradeType || "Select Downgrade Type"}
+                  </MenuButton>
+                  <MenuList>
+                    {hasOwnershipFacet && (
+                      <MenuItem
+                        onClick={() => handleDowngradeType("Ownership")}
+                      >
+                        Ownership
+                      </MenuItem>
+                    )}
+                    {hasDividendFacet && (
+                      <MenuItem onClick={() => handleDowngradeType("Dividend")}>
+                        Dividend
+                      </MenuItem>
+                    )}
+                    {hasVaultFacet && (
+                      <MenuItem onClick={() => handleDowngradeType("Vault")}>
+                        Vault
+                      </MenuItem>
+                    )}
+                  </MenuList>
+                </Menu>
+              </FormControl>
+              {downgradeType && (
+                <DowngradeForm
+                  chainName={chainName}
+                  daoAddress={daoAddress}
+                  onClose={onClose}
+                  downgradeType={downgradeType}
                 />
               )}
             </>

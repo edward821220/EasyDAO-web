@@ -160,13 +160,17 @@ function DividendForm(props: DividendProps) {
     <form key="DividendForm" onSubmit={handleSubmit(onSubmit)}>
       <ModalBody>
         <FormControl>
-          <FormLabel mt={4}>Proposal Description</FormLabel>
-          <Input
-            required
-            mb={1}
-            placeholder={"Proposal Description"}
-            {...register("description")}
-          />
+          {!isOwner && (
+            <>
+              <FormLabel mt={4}>Proposal Description</FormLabel>
+              <Input
+                required
+                mb={1}
+                placeholder={"Proposal Description"}
+                {...register("description")}
+              />
+            </>
+          )}
           <FormLabel mt={4}>Duration (Weeks)</FormLabel>
           <Input
             mb={1}

@@ -210,12 +210,11 @@ function ProposalsList({
 
   const handleExecute = (proposalId: bigint, proposalType: string) => {
     if (isLoadingExecute) return;
+    const type = proposalType.split(" ")[0];
+    const needETH = type === "Upgrade" || type === "Downgrade";
     execute?.({
       args: [proposalId],
-      value:
-        proposalType.split(" ")[0] === "Upgrade"
-          ? BigInt(0.06 * 10 ** 18)
-          : BigInt(0),
+      value: needETH ? BigInt(0.06 * 10 ** 18) : BigInt(0),
     });
   };
 

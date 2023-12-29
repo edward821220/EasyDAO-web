@@ -1262,7 +1262,7 @@ export const CONTRACT_INFOS = {
       },
       {
         type: "function",
-        name: "wtihdrawETHByProposal",
+        name: "withdrawETHByProposal",
         inputs: [
           { name: "to", type: "address", internalType: "address" },
           { name: "amount", type: "uint256", internalType: "uint256" },
