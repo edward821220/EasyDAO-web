@@ -19,7 +19,8 @@ import ProposalsList from "../../components/detail/proposalsList";
 import CreateProposalModal from "../../components/detail/createProposalModal";
 import OwnershipModal from "../../components/detail/ownershipModal";
 import DividendModal from "../../components/detail/dividendModal";
-import VaultDrawer from "../../components/detail/vaultDrawer";
+import VaultDrawer from "../../components/detail/vault/vaultDrawer";
+import MarketDrawer from "../../components/detail/market/marketDrawer";
 
 export default function Detail() {
   const toast = useToast();
@@ -43,6 +44,11 @@ export default function Detail() {
     isOpen: isOpenVault,
     onOpen: onOpenVault,
     onClose: onCloseVault,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenMarket,
+    onOpen: onOpenMarket,
+    onClose: onCloseMarket,
   } = useDisclosure();
   const router = useRouter();
   const { chain } = useNetwork();
@@ -107,6 +113,12 @@ export default function Detail() {
               chainId={chainId}
             />
           )}
+          <Flex mt={6} gap={6} alignItems="center">
+            <Heading as="h2">Market</Heading>
+            <Button colorScheme="green" onClick={onOpenMarket}>
+              Explore Market
+            </Button>
+          </Flex>
           {hasUpgradedFeatures && (
             <Box>
               <Heading as="h2" mt={6}>
@@ -225,6 +237,14 @@ export default function Detail() {
           daoAddress={daoAddress}
         />
       )}
+      <MarketDrawer
+        isOpen={isOpenMarket}
+        onClose={onCloseMarket}
+        chainId={chainId}
+        chainName={chainName}
+        account={account}
+        daoAddress={daoAddress}
+      />
     </div>
   );
 }

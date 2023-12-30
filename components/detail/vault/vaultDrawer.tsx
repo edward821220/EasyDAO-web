@@ -22,8 +22,8 @@ import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { Address, formatEther } from "viem";
 import { readContract, writeContract } from "@wagmi/core";
 import { useContractRead, useContractWrite } from "wagmi";
-import { CONTRACT_INFOS } from "../../abi/contracts";
-import { ERC20_APPROVE_ABI } from "../../abi/approve";
+import { CONTRACT_INFOS } from "../../../abi/contracts";
+import { ERC20_APPROVE_ABI } from "../../../abi/approve";
 import CrowdfundingModal from "./crowdfundingModal";
 
 interface VaultDrawerProps {

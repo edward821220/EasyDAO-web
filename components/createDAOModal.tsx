@@ -23,7 +23,7 @@ import { CONTRACT_INFOS } from "../abi/contracts";
 
 interface FounderInfo {
   founder: string;
-  shares: BigInt;
+  shares: bigint;
 }
 interface FormData {
   DAOName: string;

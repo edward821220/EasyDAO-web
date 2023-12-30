@@ -19,7 +19,7 @@ import { CONTRACT_INFOS } from "../../../abi/contracts";
 
 interface Receiver {
   receiver: string;
-  amount: BigInt;
+  amount: bigint;
 }
 interface MintFormData {
   description: string;

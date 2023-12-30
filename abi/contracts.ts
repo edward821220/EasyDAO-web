@@ -1284,4 +1284,536 @@ export const CONTRACT_INFOS = {
       },
     ],
   },
+  Market: {
+    address: "0x672A0873C16c113007304CaF6F88EA0FcA501214",
+    abi: [
+      {
+        type: "function",
+        name: "auctions",
+        inputs: [
+          { name: "token", type: "address", internalType: "address" },
+          { name: "", type: "uint256", internalType: "uint256" },
+        ],
+        outputs: [
+          { name: "seller", type: "address", internalType: "address" },
+          {
+            name: "highestBidder",
+            type: "address",
+            internalType: "address",
+          },
+          { name: "highestBid", type: "uint256", internalType: "uint256" },
+          { name: "startPrice", type: "uint256", internalType: "uint256" },
+          { name: "endTime", type: "uint256", internalType: "uint256" },
+          {
+            name: "token",
+            type: "address",
+            internalType: "contract ERC20",
+          },
+          { name: "tokenAmount", type: "uint256", internalType: "uint256" },
+          { name: "ended", type: "bool", internalType: "bool" },
+        ],
+        stateMutability: "view",
+      },
+      {
+        type: "function",
+        name: "bid",
+        inputs: [
+          {
+            name: "tokenAddress_",
+            type: "address",
+            internalType: "address",
+          },
+          { name: "auctionId_", type: "uint256", internalType: "uint256" },
+        ],
+        outputs: [],
+        stateMutability: "payable",
+      },
+      {
+        type: "function",
+        name: "buyFixedSale",
+        inputs: [
+          {
+            name: "tokenAddress_",
+            type: "address",
+            internalType: "address",
+          },
+          { name: "saleId_", type: "uint256", internalType: "uint256" },
+          { name: "tokenAmount_", type: "uint256", internalType: "uint256" },
+        ],
+        outputs: [],
+        stateMutability: "payable",
+      },
+      {
+        type: "function",
+        name: "cancelAuction",
+        inputs: [
+          {
+            name: "tokenAddress_",
+            type: "address",
+            internalType: "address",
+          },
+          { name: "auctionId_", type: "uint256", internalType: "uint256" },
+        ],
+        outputs: [],
+        stateMutability: "nonpayable",
+      },
+      {
+        type: "function",
+        name: "cancelFixedSale",
+        inputs: [
+          {
+            name: "tokenAddress_",
+            type: "address",
+            internalType: "address",
+          },
+          { name: "saleId_", type: "uint256", internalType: "uint256" },
+        ],
+        outputs: [],
+        stateMutability: "nonpayable",
+      },
+      {
+        type: "function",
+        name: "checkAuction",
+        inputs: [
+          {
+            name: "tokenAddress",
+            type: "address",
+            internalType: "address",
+          },
+          { name: "auctionId", type: "uint256", internalType: "uint256" },
+        ],
+        outputs: [
+          {
+            name: "",
+            type: "tuple",
+            internalType: "struct Market.Auction",
+            components: [
+              { name: "seller", type: "address", internalType: "address" },
+              {
+                name: "highestBidder",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "highestBid",
+                type: "uint256",
+                internalType: "uint256",
+              },
+              {
+                name: "startPrice",
+                type: "uint256",
+                internalType: "uint256",
+              },
+              { name: "endTime", type: "uint256", internalType: "uint256" },
+              {
+                name: "token",
+                type: "address",
+                internalType: "contract ERC20",
+              },
+              {
+                name: "tokenAmount",
+                type: "uint256",
+                internalType: "uint256",
+              },
+              { name: "ended", type: "bool", internalType: "bool" },
+            ],
+          },
+        ],
+        stateMutability: "view",
+      },
+      {
+        type: "function",
+        name: "checkAuctions",
+        inputs: [
+          { name: "tokenAddress", type: "address", internalType: "address" },
+        ],
+        outputs: [
+          {
+            name: "",
+            type: "tuple[]",
+            internalType: "struct Market.Auction[]",
+            components: [
+              { name: "seller", type: "address", internalType: "address" },
+              {
+                name: "highestBidder",
+                type: "address",
+                internalType: "address",
+              },
+              {
+                name: "highestBid",
+                type: "uint256",
+                internalType: "uint256",
+              },
+              {
+                name: "startPrice",
+                type: "uint256",
+                internalType: "uint256",
+              },
+              { name: "endTime", type: "uint256", internalType: "uint256" },
+              {
+                name: "token",
+                type: "address",
+                internalType: "contract ERC20",
+              },
+              {
+                name: "tokenAmount",
+                type: "uint256",
+                internalType: "uint256",
+              },
+              { name: "ended", type: "bool", internalType: "bool" },
+            ],
+          },
+        ],
+        stateMutability: "view",
+      },
+      {
+        type: "function",
+        name: "checkFixedSale",
+        inputs: [
+          {
+            name: "tokenAddress",
+            type: "address",
+            internalType: "address",
+          },
+          { name: "saleId", type: "uint256", internalType: "uint256" },
+        ],
+        outputs: [
+          {
+            name: "",
+            type: "tuple",
+            internalType: "struct Market.FixedSale",
+            components: [
+              { name: "seller", type: "address", internalType: "address" },
+              {
+                name: "pricePerToken",
+                type: "uint256",
+                internalType: "uint256",
+              },
+              {
+                name: "token",
+                type: "address",
+                internalType: "contract ERC20",
+              },
+              {
+                name: "tokenAmount",
+                type: "uint256",
+                internalType: "uint256",
+              },
+              {
+                name: "soldAmount",
+                type: "uint256",
+                internalType: "uint256",
+              },
+              { name: "canceled", type: "bool", internalType: "bool" },
+            ],
+          },
+        ],
+        stateMutability: "view",
+      },
+      {
+        type: "function",
+        name: "checkFixedSales",
+        inputs: [
+          { name: "tokenAddress", type: "address", internalType: "address" },
+        ],
+        outputs: [
+          {
+            name: "",
+            type: "tuple[]",
+            internalType: "struct Market.FixedSale[]",
+            components: [
+              { name: "seller", type: "address", internalType: "address" },
+              {
+                name: "pricePerToken",
+                type: "uint256",
+                internalType: "uint256",
+              },
+              {
+                name: "token",
+                type: "address",
+                internalType: "contract ERC20",
+              },
+              {
+                name: "tokenAmount",
+                type: "uint256",
+                internalType: "uint256",
+              },
+              {
+                name: "soldAmount",
+                type: "uint256",
+                internalType: "uint256",
+              },
+              { name: "canceled", type: "bool", internalType: "bool" },
+            ],
+          },
+        ],
+        stateMutability: "view",
+      },
+      {
+        type: "function",
+        name: "createAuction",
+        inputs: [
+          {
+            name: "tokenAddress_",
+            type: "address",
+            internalType: "address",
+          },
+          {
+            name: "tokenAmount_",
+            type: "uint256",
+            internalType: "uint256",
+          },
+          { name: "startPrice_", type: "uint256", internalType: "uint256" },
+          { name: "duration", type: "uint256", internalType: "uint256" },
+        ],
+        outputs: [
+          { name: "auctionId", type: "uint256", internalType: "uint256" },
+        ],
+        stateMutability: "nonpayable",
+      },
+      {
+        type: "function",
+        name: "createFixedSale",
+        inputs: [
+          {
+            name: "tokenAddress_",
+            type: "address",
+            internalType: "address",
+          },
+          {
+            name: "tokenAmount_",
+            type: "uint256",
+            internalType: "uint256",
+          },
+          {
+            name: "pricePerToken_",
+            type: "uint256",
+            internalType: "uint256",
+          },
+        ],
+        outputs: [{ name: "saleId", type: "uint256", internalType: "uint256" }],
+        stateMutability: "nonpayable",
+      },
+      {
+        type: "function",
+        name: "endAuction",
+        inputs: [
+          {
+            name: "tokenAddress_",
+            type: "address",
+            internalType: "address",
+          },
+          { name: "auctionId_", type: "uint256", internalType: "uint256" },
+        ],
+        outputs: [],
+        stateMutability: "nonpayable",
+      },
+      {
+        type: "function",
+        name: "fixedSales",
+        inputs: [
+          { name: "token", type: "address", internalType: "address" },
+          { name: "", type: "uint256", internalType: "uint256" },
+        ],
+        outputs: [
+          { name: "seller", type: "address", internalType: "address" },
+          {
+            name: "pricePerToken",
+            type: "uint256",
+            internalType: "uint256",
+          },
+          {
+            name: "token",
+            type: "address",
+            internalType: "contract ERC20",
+          },
+          { name: "tokenAmount", type: "uint256", internalType: "uint256" },
+          { name: "soldAmount", type: "uint256", internalType: "uint256" },
+          { name: "canceled", type: "bool", internalType: "bool" },
+        ],
+        stateMutability: "view",
+      },
+      {
+        type: "event",
+        name: "AuctionCreated",
+        inputs: [
+          {
+            name: "auctionId",
+            type: "uint256",
+            indexed: true,
+            internalType: "uint256",
+          },
+          {
+            name: "seller",
+            type: "address",
+            indexed: true,
+            internalType: "address",
+          },
+          {
+            name: "tokenAddress",
+            type: "address",
+            indexed: true,
+            internalType: "address",
+          },
+          {
+            name: "tokenAmount",
+            type: "uint256",
+            indexed: false,
+            internalType: "uint256",
+          },
+          {
+            name: "startPrice",
+            type: "uint256",
+            indexed: false,
+            internalType: "uint256",
+          },
+          {
+            name: "endTime",
+            type: "uint256",
+            indexed: false,
+            internalType: "uint256",
+          },
+        ],
+        anonymous: false,
+      },
+      {
+        type: "event",
+        name: "AuctionEnded",
+        inputs: [
+          {
+            name: "auctionId",
+            type: "uint256",
+            indexed: true,
+            internalType: "uint256",
+          },
+          {
+            name: "winner",
+            type: "address",
+            indexed: true,
+            internalType: "address",
+          },
+          {
+            name: "highestBid",
+            type: "uint256",
+            indexed: true,
+            internalType: "uint256",
+          },
+        ],
+        anonymous: false,
+      },
+      {
+        type: "event",
+        name: "Bid",
+        inputs: [
+          {
+            name: "auctionId",
+            type: "uint256",
+            indexed: true,
+            internalType: "uint256",
+          },
+          {
+            name: "bidder",
+            type: "address",
+            indexed: true,
+            internalType: "address",
+          },
+          {
+            name: "bid",
+            type: "uint256",
+            indexed: true,
+            internalType: "uint256",
+          },
+        ],
+        anonymous: false,
+      },
+      {
+        type: "event",
+        name: "FixedSaleCanceled",
+        inputs: [
+          {
+            name: "tokenAddress",
+            type: "address",
+            indexed: true,
+            internalType: "address",
+          },
+          {
+            name: "saleId",
+            type: "uint256",
+            indexed: true,
+            internalType: "uint256",
+          },
+        ],
+        anonymous: false,
+      },
+      {
+        type: "event",
+        name: "FixedSaleCompleted",
+        inputs: [
+          {
+            name: "tokenAddress",
+            type: "address",
+            indexed: true,
+            internalType: "address",
+          },
+          {
+            name: "saleId",
+            type: "uint256",
+            indexed: true,
+            internalType: "uint256",
+          },
+          {
+            name: "buyer",
+            type: "address",
+            indexed: true,
+            internalType: "address",
+          },
+          {
+            name: "amount",
+            type: "uint256",
+            indexed: false,
+            internalType: "uint256",
+          },
+        ],
+        anonymous: false,
+      },
+      {
+        type: "event",
+        name: "FixedSaleCreated",
+        inputs: [
+          {
+            name: "saleId",
+            type: "uint256",
+            indexed: true,
+            internalType: "uint256",
+          },
+          {
+            name: "seller",
+            type: "address",
+            indexed: true,
+            internalType: "address",
+          },
+          {
+            name: "tokenAddress",
+            type: "address",
+            indexed: true,
+            internalType: "address",
+          },
+          {
+            name: "tokenAmount",
+            type: "uint256",
+            indexed: false,
+            internalType: "uint256",
+          },
+          {
+            name: "price",
+            type: "uint256",
+            indexed: false,
+            internalType: "uint256",
+          },
+        ],
+        anonymous: false,
+      },
+      { type: "error", name: "ReentrancyGuardReentrantCall", inputs: [] },
+    ],
+  },
 } as const;

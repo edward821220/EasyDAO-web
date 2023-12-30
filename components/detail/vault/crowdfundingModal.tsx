@@ -23,7 +23,7 @@ import {
 import { ChevronDownIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import { Address } from "viem";
 import { useContractWrite } from "wagmi";
-import { CONTRACT_INFOS } from "../../abi/contracts";
+import { CONTRACT_INFOS } from "../../../abi/contracts";
 
 interface CrowdfundingFormData {
   amount: bigint;
