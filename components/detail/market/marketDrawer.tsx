@@ -15,6 +15,7 @@ import { Address } from "viem";
 import { useToken } from "wagmi";
 import AuctionModal from "./auctionModal";
 import AuctionsList from "./auctionsList";
+import FixedSaleModal from "./fixedSaleModal";
 
 interface MarketDrawerProps {
   isOpen: boolean;
@@ -30,6 +31,11 @@ function MarketDrawer(props: MarketDrawerProps) {
     isOpen: isOpenAuction,
     onOpen: onOpenAuction,
     onClose: onCloseAuction,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenFixedSale,
+    onOpen: onOpenFixedSale,
+    onClose: onCloseFixedSale,
   } = useDisclosure();
 
   const { data: tokenData } = useToken({
@@ -69,7 +75,7 @@ function MarketDrawer(props: MarketDrawerProps) {
             <Box>
               <Flex mt={10} gap={4} alignItems="center">
                 <Text fontSize="20px">Fixed Price</Text>
-                <Button colorScheme="teal" onClick={() => {}}>
+                <Button colorScheme="teal" onClick={onOpenFixedSale}>
                   Sell at Fixed Price
                 </Button>
               </Flex>
@@ -80,6 +86,14 @@ function MarketDrawer(props: MarketDrawerProps) {
       <AuctionModal
         isOpen={isOpenAuction}
         onClose={onCloseAuction}
+        chainId={chainId}
+        chainName={chainName}
+        account={account}
+        daoAddress={daoAddress}
+      />
+      <FixedSaleModal
+        isOpen={isOpenFixedSale}
+        onClose={onCloseFixedSale}
         chainId={chainId}
         chainName={chainName}
         account={account}

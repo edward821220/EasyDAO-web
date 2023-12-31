@@ -162,14 +162,13 @@ function AuctionsList(props: IAuctionsListProps) {
                 >
                   {isEnded ? "Ended" : isTimeout ? "Timeout" : "Ongoing"}
                 </Badge>
-                <Text>Seller: {auction.seller.slice(0, 6)}...</Text>
+                <Text>Seller: {auction.seller.slice(0, 10)}...</Text>
                 <Text>Highest Bid: {formatEther(auction.highestBid)}</Text>
                 <Text>Start Price: {formatEther(auction.startPrice)}</Text>
                 <Text>Amount: {formatEther(auction.tokenAmount)}</Text>
                 <Text>
                   {hasBidder &&
-                    `Highest Bidder: ${auction.highestBidder.slice(0, 6)}
-              ...`}
+                    `Highest Bidder: ${auction.highestBidder.slice(0, 10)}...`}
                 </Text>
                 <Text wordBreak="break-word">
                   End Time:{" "}

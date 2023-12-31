@@ -22,12 +22,11 @@ import { writeContract } from "@wagmi/core";
 import { useContractRead, useContractWrite } from "wagmi";
 import { CONTRACT_INFOS } from "../../../abi/contracts";
 
-interface AuctionFormData {
+interface FixedSaleFormData {
   amount: bigint;
-  startPrice: bigint;
-  duration: bigint;
+  pricePerToken: bigint;
 }
-interface AuctionModalProps {
+interface FixedSaleModalProps {
   isOpen: boolean;
   onClose: () => void;
   chainId: number;
@@ -35,24 +34,23 @@ interface AuctionModalProps {
   account: Address;
   daoAddress: Address;
 }
-function AuctionModal(props: AuctionModalProps) {
+function FixedSaleModal(props: FixedSaleModalProps) {
   const { isOpen, onClose, chainId, chainName, account, daoAddress } = props;
   const toast = useToast();
   const [isApproving, setIsApproving] = useState(false);
-  const { register, handleSubmit, reset } = useForm<AuctionFormData>({
+  const { register, handleSubmit, reset } = useForm<FixedSaleFormData>({
     defaultValues: {
       amount: BigInt(0),
-      startPrice: BigInt(0),
-      duration: BigInt(0),
+      pricePerToken: BigInt(0),
     },
   });
 
-  const { isLoading: isLoadingAuction, write: createAuction } =
+  const { isLoading: isLoadingFixedSale, write: createFixedSale } =
     useContractWrite({
       chainId,
       address: CONTRACT_INFOS.Market.address,
       abi: CONTRACT_INFOS.Market.abi,
-      functionName: "createAuction",
+      functionName: "createFixedSale",
       onSuccess: (data) => {
         toast({
           title: "Transaction succeeded",
@@ -63,7 +61,7 @@ function AuctionModal(props: AuctionModalProps) {
               }`}
               isExternal
             >
-              Create Auction succeeded! <ExternalLinkIcon mx="2px" />
+              Create FixedSale succeeded! <ExternalLinkIcon mx="2px" />
             </Link>
           ),
           status: "success",
@@ -74,7 +72,7 @@ function AuctionModal(props: AuctionModalProps) {
       onError: () => {
         toast({
           title: "Transaction failed",
-          description: "Create Auction failed",
+          description: "Create FixedSale failed",
           status: "error",
           duration: 10000,
           isClosable: true,
@@ -91,7 +89,7 @@ function AuctionModal(props: AuctionModalProps) {
     args: [account, CONTRACT_INFOS.Market.address],
   });
 
-  const onSubmit = async (formData: AuctionFormData) => {
+  const onSubmit = async (formData: FixedSaleFormData) => {
     if (isLoading) return;
     if (Number(allowance) < formData.amount) {
       setIsApproving(true);
@@ -106,12 +104,11 @@ function AuctionModal(props: AuctionModalProps) {
           ],
         });
         setIsApproving(false);
-        createAuction?.({
+        createFixedSale?.({
           args: [
             daoAddress,
             BigInt(Number(formData.amount) * 10 ** 18),
-            BigInt(Number(formData.startPrice) * 10 ** 18),
-            BigInt(Number(formData.duration) * 86400),
+            BigInt(Number(formData.pricePerToken) * 10 ** 18),
           ],
         });
       } catch {
@@ -124,41 +121,36 @@ function AuctionModal(props: AuctionModalProps) {
         setIsApproving(false);
       }
     } else {
-      createAuction?.({
+      createFixedSale?.({
         args: [
           daoAddress,
           BigInt(Number(formData.amount) * 10 ** 18),
-          BigInt(Number(formData.startPrice) * 10 ** 18),
-          BigInt(Number(formData.duration) * 86400),
+          BigInt(Number(formData.pricePerToken) * 10 ** 18),
         ],
       });
     }
     onClose();
     reset();
   };
-  const isLoading = isApproving || isLoadingAuction;
+  const isLoading = isApproving || isLoadingFixedSale;
 
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent pb={4}>
-          <ModalHeader>Auction</ModalHeader>
+          <ModalHeader>FixedSale</ModalHeader>
           <ModalCloseButton />
           <form onSubmit={handleSubmit(onSubmit)}>
             <ModalBody>
               <FormControl mt={4}>
-                <FormLabel>Start Price (ETH)</FormLabel>
+                <FormLabel>Price Per Token (ETH)</FormLabel>
                 <NumberInput>
-                  <NumberInputField {...register("startPrice")} />
+                  <NumberInputField {...register("pricePerToken")} />
                 </NumberInput>
                 <FormLabel mt={4}>Amount</FormLabel>
                 <NumberInput>
                   <NumberInputField {...register("amount")} />
-                </NumberInput>
-                <FormLabel mt={4}>Duration (Days)</FormLabel>
-                <NumberInput>
-                  <NumberInputField {...register("duration")} />
                 </NumberInput>
               </FormControl>
             </ModalBody>
@@ -180,4 +172,4 @@ function AuctionModal(props: AuctionModalProps) {
   );
 }
 
-export default AuctionModal;
+export default FixedSaleModal;
