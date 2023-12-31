@@ -16,6 +16,7 @@ import { useToken } from "wagmi";
 import AuctionModal from "./auctionModal";
 import AuctionsList from "./auctionsList";
 import FixedSaleModal from "./fixedSaleModal";
+import FixedSalesList from "./fixedSalesList";
 
 interface MarketDrawerProps {
   isOpen: boolean;
@@ -79,6 +80,12 @@ function MarketDrawer(props: MarketDrawerProps) {
                   Sell at Fixed Price
                 </Button>
               </Flex>
+              <FixedSalesList
+                chainId={chainId}
+                chainName={chainName}
+                account={account}
+                daoAddress={daoAddress}
+              />
             </Box>
           </DrawerBody>
         </DrawerContent>

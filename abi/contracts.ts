@@ -1285,7 +1285,7 @@ export const CONTRACT_INFOS = {
     ],
   },
   Market: {
-    address: "0x672A0873C16c113007304CaF6F88EA0FcA501214",
+    address: "0xf69E70b038bBE4FeF3F47bB6649F50ba45e045d9",
     abi: [
       {
         type: "function",
