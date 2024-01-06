@@ -15,7 +15,7 @@ const { chains, publicClient } = configureChains(
       rpc: (chain) => ({
         http:
           chain.name === "Holesky"
-            ? process.env.NEXT_PUBLIC_HOLESKY_RPC!
+            ? chain.rpcUrls.default.http[0]
             : chain.rpcUrls.public.http[0],
       }),
     }),
