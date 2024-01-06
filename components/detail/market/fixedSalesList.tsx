@@ -133,37 +133,39 @@ function FixedSalesList(props: IFixedSalesListProps) {
                 <Text>Total Amount: {formatEther(fixedSale.tokenAmount)}</Text>
                 <Text>Sold Amount: {formatEther(fixedSale.soldAmount)}</Text>
                 <Flex mt={4} gap={2} justifyContent="flex-end">
-                  {!isCanceled && !isSoldOut && (
-                    <>
-                      <NumberInput>
-                        <NumberInputField
-                          value={buyAmount}
-                          onChange={(e) => {
-                            setBuyAmount(Number(e.target.value));
+                  {!isCanceled &&
+                    !isSoldOut &&
+                    account !== fixedSale.seller && (
+                      <>
+                        <NumberInput>
+                          <NumberInputField
+                            value={buyAmount}
+                            onChange={(e) => {
+                              setBuyAmount(Number(e.target.value));
+                            }}
+                          />
+                        </NumberInput>
+                        <Button
+                          isLoading={isLoadingBuy}
+                          colorScheme="blue"
+                          onClick={() => {
+                            buy?.({
+                              args: [
+                                daoAddress,
+                                BigInt(index + 1),
+                                BigInt(Number(buyAmount) * 10 ** 18),
+                              ],
+                              value: BigInt(
+                                Number(buyAmount) *
+                                  Number(fixedSale.pricePerToken)
+                              ),
+                            });
                           }}
-                        />
-                      </NumberInput>
-                      <Button
-                        isLoading={isLoadingBuy}
-                        colorScheme="blue"
-                        onClick={() => {
-                          buy?.({
-                            args: [
-                              daoAddress,
-                              BigInt(index + 1),
-                              BigInt(Number(buyAmount) * 10 ** 18),
-                            ],
-                            value: BigInt(
-                              Number(buyAmount) *
-                                Number(fixedSale.pricePerToken)
-                            ),
-                          });
-                        }}
-                      >
-                        Buy
-                      </Button>
-                    </>
-                  )}
+                        >
+                          Buy
+                        </Button>
+                      </>
+                    )}
                   {account === fixedSale.seller &&
                     !isCanceled &&
                     !isSoldOut && (

@@ -18,7 +18,7 @@ import {
 } from "@chakra-ui/react";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { Address } from "viem";
-import { writeContract } from "@wagmi/core";
+import { writeContract, getPublicClient } from "@wagmi/core";
 import { useContractRead, useContractWrite } from "wagmi";
 import { CONTRACT_INFOS } from "../../../abi/contracts";
 
@@ -37,6 +37,7 @@ interface FixedSaleModalProps {
 function FixedSaleModal(props: FixedSaleModalProps) {
   const { isOpen, onClose, chainId, chainName, account, daoAddress } = props;
   const toast = useToast();
+  const publicClient = getPublicClient();
   const [isApproving, setIsApproving] = useState(false);
   const { register, handleSubmit, reset } = useForm<FixedSaleFormData>({
     defaultValues: {
@@ -91,10 +92,10 @@ function FixedSaleModal(props: FixedSaleModalProps) {
 
   const onSubmit = async (formData: FixedSaleFormData) => {
     if (isLoading) return;
-    if (Number(allowance) < formData.amount) {
+    if (Number(allowance) < Number(formData.amount) * 10 ** 18) {
       setIsApproving(true);
       try {
-        await writeContract({
+        const data = await writeContract({
           address: daoAddress,
           abi: CONTRACT_INFOS.DaoFacet.abi,
           functionName: "approve",
@@ -103,14 +104,8 @@ function FixedSaleModal(props: FixedSaleModalProps) {
             BigInt(Number(formData.amount) * 10 ** 18),
           ],
         });
+        await publicClient.waitForTransactionReceipt({ hash: data.hash });
         setIsApproving(false);
-        createFixedSale?.({
-          args: [
-            daoAddress,
-            BigInt(Number(formData.amount) * 10 ** 18),
-            BigInt(Number(formData.pricePerToken) * 10 ** 18),
-          ],
-        });
       } catch {
         toast({
           title: "Approve failed",
@@ -128,9 +123,9 @@ function FixedSaleModal(props: FixedSaleModalProps) {
           BigInt(Number(formData.pricePerToken) * 10 ** 18),
         ],
       });
+      onClose();
+      reset();
     }
-    onClose();
-    reset();
   };
   const isLoading = isApproving || isLoadingFixedSale;
 

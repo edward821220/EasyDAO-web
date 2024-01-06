@@ -20,7 +20,7 @@ import {
 } from "@chakra-ui/react";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { Address, formatEther } from "viem";
-import { readContract, writeContract } from "@wagmi/core";
+import { readContract, writeContract, getPublicClient } from "@wagmi/core";
 import { useContractRead, useContractWrite } from "wagmi";
 import { CONTRACT_INFOS } from "../../../abi/contracts";
 import { ERC20_APPROVE_ABI } from "../../../abi/approve";
@@ -46,6 +46,7 @@ function VaultDrawer(props: VaultDrawerProps) {
     daoAddress,
   } = props;
   const toast = useToast();
+  const publicClient = getPublicClient();
   const {
     isOpen: isOpenCrowdfunding,
     onOpen: onOpenCrowdfunding,
@@ -64,7 +65,8 @@ function VaultDrawer(props: VaultDrawerProps) {
     functionName: "checkCrowdfundingInfos",
     watch: true,
     onSuccess(data) {
-      amounts.length === 0 && setAmounts(new Array(data.length).fill(0));
+      amounts.length < data.length &&
+        setAmounts(new Array(data.length).fill(0));
     },
   });
 
@@ -265,7 +267,7 @@ function VaultDrawer(props: VaultDrawerProps) {
                     alignItems="center"
                     flexWrap="wrap"
                   >
-                    <Box>
+                    <Box maxW="80%">
                       <Text>ID: {index + 1}</Text>
                       <Text wordBreak="break-word">
                         Description: {crowdfundingInfo.title}
@@ -299,79 +301,85 @@ function VaultDrawer(props: VaultDrawerProps) {
                     justifyContent="flex-end"
                     flexWrap="wrap"
                   >
-                    <NumberInput width="30%">
-                      <NumberInputField
-                        value={amount}
-                        onChange={(e) =>
-                          setAmounts(
-                            amounts.map((amount, amountIndex) =>
-                              amountIndex === index
-                                ? Number(e.target.value)
-                                : amount
-                            )
-                          )
-                        }
-                      />
-                    </NumberInput>
-                    <Button
-                      isLoading={isLoadingContribute}
-                      colorScheme="facebook"
-                      onClick={async () => {
-                        if (amount <= 0) {
-                          toast({
-                            title: "Invalid amount",
-                            status: "error",
-                            duration: 5000,
-                            isClosable: true,
-                          });
-                          return;
-                        }
-                        if (isETH) {
-                          handleContributeETH(
-                            BigInt(index),
-                            BigInt(amount * 10 ** 18)
-                          );
-                        } else {
-                          const allowance = await readContract({
-                            address: crowdfundingInfo.token,
-                            abi: ERC20_APPROVE_ABI,
-                            functionName: "allowance",
-                            args: [account, daoAddress],
-                          });
-                          if (allowance < amount) {
-                            setIsApproving(true);
-                            try {
-                              await writeContract({
-                                address: crowdfundingInfo.token,
-                                abi: ERC20_APPROVE_ABI,
-                                functionName: "approve",
-                                args: [daoAddress, BigInt(amount * 10 ** 18)],
-                              });
-                              setIsApproving(false);
-                              handleContributeERC20(
-                                BigInt(index),
-                                BigInt(amount * 10 ** 18)
-                              );
-                            } catch {
+                    {account === crowdfundingInfo.crowdfundingInitiator || (
+                      <>
+                        <NumberInput width="30%">
+                          <NumberInputField
+                            value={amount}
+                            onChange={(e) =>
+                              setAmounts(
+                                amounts.map((amount, amountIndex) =>
+                                  amountIndex === index
+                                    ? Number(e.target.value)
+                                    : amount
+                                )
+                              )
+                            }
+                          />
+                        </NumberInput>
+                        <Button
+                          isLoading={isLoadingContribute}
+                          colorScheme="facebook"
+                          onClick={async () => {
+                            if (amount <= 0) {
                               toast({
-                                title: "Approve failed",
+                                title: "Invalid amount",
                                 status: "error",
                                 duration: 5000,
                                 isClosable: true,
                               });
-                              setIsApproving(false);
+                              return;
                             }
-                          } else {
-                            handleContributeERC20(
-                              BigInt(index),
-                              BigInt(amount * 10 ** 18)
-                            );
-                          }
-                        }
-                      }}
-                    >
-                      Contribute
-                    </Button>
+                            if (isETH) {
+                              handleContributeETH(
+                                BigInt(index),
+                                BigInt(amount * 10 ** 18)
+                              );
+                            } else {
+                              const allowance = await readContract({
+                                address: crowdfundingInfo.token,
+                                abi: ERC20_APPROVE_ABI,
+                                functionName: "allowance",
+                                args: [account, daoAddress],
+                              });
+                              if (Number(allowance) < amount * 10 ** 18) {
+                                setIsApproving(true);
+                                try {
+                                  const data = await writeContract({
+                                    address: crowdfundingInfo.token,
+                                    abi: ERC20_APPROVE_ABI,
+                                    functionName: "approve",
+                                    args: [
+                                      daoAddress,
+                                      BigInt(amount * 10 ** 18),
+                                    ],
+                                  });
+                                  await publicClient.waitForTransactionReceipt({
+                                    hash: data.hash,
+                                  });
+                                  setIsApproving(false);
+                                } catch {
+                                  toast({
+                                    title: "Approve failed",
+                                    status: "error",
+                                    duration: 5000,
+                                    isClosable: true,
+                                  });
+                                  setIsApproving(false);
+                                }
+                              } else {
+                                handleContributeERC20(
+                                  BigInt(index),
+                                  BigInt(amount * 10 ** 18)
+                                );
+                              }
+                            }
+                          }}
+                        >
+                          Contribute
+                        </Button>
+                      </>
+                    )}
                     {account === crowdfundingInfo.crowdfundingInitiator && (
                       <Button
                         colorScheme="pink"

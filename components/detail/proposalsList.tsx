@@ -66,16 +66,18 @@ function ProposalsList({
     functionName: "getProposals",
     watch: true,
   });
+  const fromBlock = proposalDetails?.[0]?.snapshotId;
 
   useEffect(() => {
     if (!daoAddress) return;
+    if (!fromBlock) return;
     const getAllEvents = async () => {
       const logs = await publicClient.getLogs({
         address: daoAddress,
         event: parseAbiItem(
           "event ProposalCreated(uint256 indexed proposalId,uint256 indexed totalSupplySnapshot, string proposalType, string description)"
         ),
-        fromBlock: BigInt(1),
+        fromBlock,
       });
       const decodedLogs = logs.map(
         (log) =>
@@ -89,7 +91,7 @@ function ProposalsList({
       proposalEventsRef.current = decodedLogs;
     };
     getAllEvents();
-  }, [publicClient, daoAddress]);
+  }, [publicClient, daoAddress, fromBlock]);
 
   useContractEvent({
     ...contract,

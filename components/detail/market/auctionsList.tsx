@@ -175,7 +175,7 @@ function AuctionsList(props: IAuctionsListProps) {
                   {new Date(Number(auction.endTime) * 1000).toLocaleString()}
                 </Text>
                 <Flex mt={4} gap={2} justifyContent="flex-end">
-                  {!isEnded && !isTimeout && (
+                  {!isEnded && !isTimeout && account !== auction.seller && (
                     <>
                       <NumberInput>
                         <NumberInputField

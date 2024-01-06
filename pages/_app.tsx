@@ -4,12 +4,12 @@ import type { AppProps } from "next/app";
 import { ChakraProvider } from "@chakra-ui/react";
 import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
-import { sepolia, holesky, localhost } from "wagmi/chains";
+import { sepolia, holesky } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
 import Layout from "../components/layout";
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [sepolia, holesky, localhost],
+  [sepolia, holesky],
   [publicProvider()]
 );
 

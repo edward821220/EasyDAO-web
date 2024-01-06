@@ -18,7 +18,7 @@ import {
 } from "@chakra-ui/react";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { Address } from "viem";
-import { writeContract } from "@wagmi/core";
+import { writeContract, getPublicClient } from "@wagmi/core";
 import { useContractRead, useContractWrite } from "wagmi";
 import { CONTRACT_INFOS } from "../../../abi/contracts";
 
@@ -38,6 +38,7 @@ interface AuctionModalProps {
 function AuctionModal(props: AuctionModalProps) {
   const { isOpen, onClose, chainId, chainName, account, daoAddress } = props;
   const toast = useToast();
+  const publicClient = getPublicClient();
   const [isApproving, setIsApproving] = useState(false);
   const { register, handleSubmit, reset } = useForm<AuctionFormData>({
     defaultValues: {
@@ -93,10 +94,10 @@ function AuctionModal(props: AuctionModalProps) {
 
   const onSubmit = async (formData: AuctionFormData) => {
     if (isLoading) return;
-    if (Number(allowance) < formData.amount) {
+    if (Number(allowance) < Number(formData.amount) * 10 ** 18) {
       setIsApproving(true);
       try {
-        await writeContract({
+        const data = await writeContract({
           address: daoAddress,
           abi: CONTRACT_INFOS.DaoFacet.abi,
           functionName: "approve",
@@ -105,15 +106,8 @@ function AuctionModal(props: AuctionModalProps) {
             BigInt(Number(formData.amount) * 10 ** 18),
           ],
         });
+        await publicClient.waitForTransactionReceipt({ hash: data.hash });
         setIsApproving(false);
-        createAuction?.({
-          args: [
-            daoAddress,
-            BigInt(Number(formData.amount) * 10 ** 18),
-            BigInt(Number(formData.startPrice) * 10 ** 18),
-            BigInt(Number(formData.duration) * 86400),
-          ],
-        });
       } catch {
         toast({
           title: "Approve failed",
@@ -132,9 +126,9 @@ function AuctionModal(props: AuctionModalProps) {
           BigInt(Number(formData.duration) * 86400),
         ],
       });
+      onClose();
+      reset();
     }
-    onClose();
-    reset();
   };
   const isLoading = isApproving || isLoadingAuction;
 

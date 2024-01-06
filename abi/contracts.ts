@@ -1,6 +1,6 @@
 export const CONTRACT_INFOS = {
   DiamondFactory: {
-    address: "0x0AfbF2d32cD109c549DdD01431EE0E034Ff5CeC7",
+    address: "0xd829336caE107E5Ae675976A8693024c4AAce061",
     abi: [
       { type: "constructor", inputs: [], stateMutability: "nonpayable" },
       { type: "fallback", stateMutability: "payable" },
@@ -176,7 +176,7 @@ export const CONTRACT_INFOS = {
     ],
   },
   DiamondCutFacet: {
-    address: "0x1ECB09022Bc800A65a7Ebd27C0ba692B6Cf78a09",
+    address: "0x9cE63b19cD81dfd19987428E504EB4798a96fF28",
     abi: [
       {
         type: "function",
@@ -341,7 +341,7 @@ export const CONTRACT_INFOS = {
     ],
   },
   DiamondLoupeFacet: {
-    address: "0x937a6B316E226E8de1E7AE196B1ADC11A15D4256",
+    address: "0x520368386a2726422821773A32BE369e05e5e579",
     abi: [
       {
         type: "function",
@@ -425,7 +425,7 @@ export const CONTRACT_INFOS = {
     ],
   },
   DaoFacet: {
-    address: "0x586E54C86990A3b97c1247bD9fd98A4069cC48D1",
+    address: "0x7Db2A483C84d4b49Da487E0E0fAe256Aa29e33C4",
     abi: [
       {
         type: "function",
@@ -806,7 +806,7 @@ export const CONTRACT_INFOS = {
     ],
   },
   DaoInit: {
-    address: "0xd4947EaAef47035F1B6215040d4c32B89A20CC37",
+    address: "0x95F87F7c7120364c18F8d8c7c78A06B0C9C21d13",
     abi: [
       {
         type: "function",
@@ -857,7 +857,7 @@ export const CONTRACT_INFOS = {
     ],
   },
   OwnershipFacet: {
-    address: "0x7E374A3d3761B0E1160babB94c87C2c0cB4Ea804",
+    address: "0x16c16C6bB7548Cac5d0b45cfBC7fB559aBcc7030",
     abi: [
       {
         type: "function",
@@ -916,7 +916,7 @@ export const CONTRACT_INFOS = {
     ],
   },
   OwnershipInit: {
-    address: "0xDa50ad6104f097e8E4b63eA97Ee3fF67d6a93fDA",
+    address: "0x9363313bf642b0648dF45b649B342ee3fDDF1b38",
     abi: [
       {
         type: "function",
@@ -949,7 +949,7 @@ export const CONTRACT_INFOS = {
     ],
   },
   DividendFacet: {
-    address: "0x65993d2EaFB88aD8c64E31eaBdEB73FB0f6B66AA",
+    address: "0xC1d94a2C3b3be8FC2970478b393f1549524aA9D7",
     abi: [
       {
         type: "function",
@@ -1049,7 +1049,7 @@ export const CONTRACT_INFOS = {
     ],
   },
   DividendInit: {
-    address: "0x634e7C7888B571D468703E4C73b1Eaf347D46D38",
+    address: "0x11148f6ABb7d6879d11eE037Ca47A0fBB82d855d",
     abi: [
       {
         type: "function",
@@ -1064,7 +1064,7 @@ export const CONTRACT_INFOS = {
     ],
   },
   VaultFacet: {
-    address: "0x8E8180Dd4888A4Cd31a4B211890BF1878AEBA489",
+    address: "0x75CeCF600f6C3Da7e663Cfb38Bb3A95AB0D8eF0D",
     abi: [
       {
         type: "function",
@@ -1273,7 +1273,7 @@ export const CONTRACT_INFOS = {
     ],
   },
   VaultInit: {
-    address: "0x361D70747955aa4141de3A7e8Dd2E91023F4116E",
+    address: "0x9b5Bcb397C9429953E37143EADe9f7F7Bc3998B4",
     abi: [
       {
         type: "function",
@@ -1285,7 +1285,7 @@ export const CONTRACT_INFOS = {
     ],
   },
   Market: {
-    address: "0xf69E70b038bBE4FeF3F47bB6649F50ba45e045d9",
+    address: "0x44536FE6e02928A7381776F2285Ef6155a3fFC4c",
     abi: [
       {
         type: "function",
