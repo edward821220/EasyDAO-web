@@ -1,4 +1,4 @@
-### Introduction
+# Introduction
 
 [Website URL](https://easy-dao-beige.vercel.app/)
 
