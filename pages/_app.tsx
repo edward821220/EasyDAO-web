@@ -5,12 +5,21 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { sepolia, holesky } from "wagmi/chains";
-import { publicProvider } from "wagmi/providers/public";
+import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import Layout from "../components/layout";
 
 const { chains, publicClient } = configureChains(
   [sepolia, holesky],
-  [publicProvider()]
+  [
+    jsonRpcProvider({
+      rpc: (chain) => ({
+        http:
+          chain.name === "Holesky"
+            ? "https://compatible-long-mountain.ethereum-holesky.quiknode.pro/f52f271d9577db78dd20a9e9cf96997a7292b281/"
+            : chain.rpcUrls.public.http[0],
+      }),
+    }),
+  ]
 );
 
 const { connectors } = getDefaultWallets({
