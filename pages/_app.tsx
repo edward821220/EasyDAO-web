@@ -15,7 +15,7 @@ const { chains, publicClient } = configureChains(
       rpc: (chain) => ({
         http:
           chain.name === "Holesky"
-            ? "https://compatible-long-mountain.ethereum-holesky.quiknode.pro/f52f271d9577db78dd20a9e9cf96997a7292b281/"
+            ? process.env.NEXT_PUBLIC_HOLESKY_RPC!
             : chain.rpcUrls.public.http[0],
       }),
     }),
