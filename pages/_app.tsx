@@ -8,7 +8,7 @@ import { sepolia, holesky } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
 import Layout from "../components/layout";
 
-const { chains, publicClient, webSocketPublicClient } = configureChains(
+const { chains, publicClient } = configureChains(
   [sepolia, holesky],
   [publicProvider()]
 );
@@ -23,7 +23,6 @@ const wagmiConfig = createConfig({
   autoConnect: true,
   connectors,
   publicClient,
-  webSocketPublicClient,
 });
 
 function MyApp({ Component, pageProps }: AppProps) {
